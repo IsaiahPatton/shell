@@ -17,6 +17,7 @@ import javax.swing.SwingConstants;
 
 public class Icon extends JLabel {
 
+    private static final long serialVersionUID = 1L;
     private static DefaultIconPack pack;
     public boolean hasIcon;
     
@@ -26,15 +27,14 @@ public class Icon extends JLabel {
 
     public Icon(File f, boolean lis) {
         super(f.getName());
-        if (null == pack) {
+        this.setForeground(Color.WHITE);
+        if (null == pack)
             pack = new DefaultIconPack();
-        }
+
         hasIcon = false;
         try {
             setIcon(f.getName(), f.isDirectory());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
 
         this.setPreferredSize(new Dimension(100,55));
         this.setVerticalTextPosition(SwingConstants.BOTTOM);

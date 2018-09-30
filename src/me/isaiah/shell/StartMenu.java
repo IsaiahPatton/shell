@@ -21,6 +21,7 @@ import me.isaiah.shell.programs.Console;
 import me.isaiah.shell.programs.MineSweeper;
 import me.isaiah.shell.programs.MiniBrowser;
 import me.isaiah.shell.programs.ProgramManager;
+import me.isaiah.shell.programs.ZunoZapSwing;
 
 public class StartMenu extends JProgram {
 
@@ -85,11 +86,12 @@ public class StartMenu extends JProgram {
 
         programs.setMenuLocation(programs.getLocation().x + 100, programs.getLocation().y);
         programs.add("Web Browser").addActionListener(l -> Main.startBrowser());
+        programs.add("Web Browser Lite").addActionListener(l -> new ZunoZapSwing());
         programs.add("File Explorer").addActionListener(l -> Main.newFileExplorer(root));
         programs.add("NotePad").addActionListener(l -> Main.emptyNotePad());
         programs.add("Termanal").addActionListener(l -> Main.start(new Console(), 850, 500));
         programs.add("Task Manager").addActionListener(l -> Main.taskManager());
-        programs.add("Lite Web Browser").addActionListener(l -> Main.start(new MiniBrowser(), 300, 500));
+        programs.add("JEditorPane Browser").addActionListener(l -> Main.start(new MiniBrowser(), 300, 500));
         programs.add("Calcalator").addActionListener(l -> Main.start(new Calc(), 200, 200));
         programs.add("Minesweeper").addActionListener(l -> Main.start(new MineSweeper(), 250, 350));
         programs.add("Active Desktop Test").addActionListener(l -> new ActiveDesktop()); // Testing
@@ -106,7 +108,7 @@ public class StartMenu extends JProgram {
         setContentPane(p);
 
         addInternalFrameListener(new InternalFrameAdapter(){
-            public void internalFrameClosing(InternalFrameEvent e) { /*popup.setVisible(false);*/ stop(); }
+            public void internalFrameClosing(InternalFrameEvent e) { stop(); }
         });
 
         putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);

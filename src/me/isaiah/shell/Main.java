@@ -2,7 +2,6 @@ package me.isaiah.shell;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -26,15 +25,12 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
@@ -43,10 +39,6 @@ import javax.swing.text.DefaultCaret;
 import javafx.embed.swing.JFXPanel;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.programs.Browser;
-import me.isaiah.shell.programs.Calc;
-import me.isaiah.shell.programs.Console;
-import me.isaiah.shell.programs.MineSweeper;
-import me.isaiah.shell.programs.MiniBrowser;
 import me.isaiah.shell.programs.ProgramManager;
 
 public class Main {
@@ -56,18 +48,9 @@ public class Main {
     public static final Runtime r = Runtime.getRuntime();
     public static final int ram = (int) ((r.maxMemory() / 1024) / 1024);
     private static String mem;
-    private static File desktop = new File(new File(System.getProperty("user.home")), "Desktop");
     public static JPanel taskbar = new JPanel();
-    public static final JDesktopPane p = new JDesktopPane() {
-        private static final long serialVersionUID = 1L;
+    public static final ZDesktopPane p = new ZDesktopPane();
 
-        @Override public void addImpl(Component j, Object constraints, int index) {
-            j.setVisible(true);
-            super.addImpl(j, constraints, index);
-            moveToFront(j);
-        }
-    };
-    //protected static final JMenu programs = new JMenu("Programs");
     private static JProgramManager pm;
     protected static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
 
@@ -180,6 +163,9 @@ public class Main {
             showNotification("A new update is out!\n  Current version: " + VERSION + "\n  Latest version: "
                     + l + "\nhttp://isaiahpatton.github.io/jshell", new Font("Arial", Font.BOLD, 14), 10000, 420, 110);
         f.validate();
+        try {
+            p.setBackground(ImageIO.read(new URL("https://avatars.mds.yandex.net/get-pdb/33827/369cb281-1bb7-448d-9df1-cbe68da08025/orig")));
+        } catch (IOException e1) { e1.printStackTrace(); }
     }
 
     public static String getUrlSource(String url) {
