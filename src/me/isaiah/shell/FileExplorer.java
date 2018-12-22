@@ -1,6 +1,7 @@
 package me.isaiah.shell;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -23,8 +24,6 @@ public class FileExplorer extends JProgram {
     private static final long serialVersionUID = 1L;
 
     public FileExplorer(File folder) {
-        super("File Explorer");
-
         int le = folder.listFiles().length;
         JPanel pan = new JPanel(new GridLayout(le > 5 ? le / 5 : 3, 1));
         JPanel pa = new JPanel();
@@ -44,7 +43,7 @@ public class FileExplorer extends JProgram {
         pa.add(pa2);
 
         for (File fil : folder.listFiles()) {
-            Icon ic = new Icon(fil);
+            Icon ic = new Icon(fil, false, Main.dark ? Color.WHITE : Color.BLACK);
             ic.addActionListener(l -> {
                 if (fil.isDirectory()) {
                     field.setText(fil.getAbsolutePath());
@@ -70,7 +69,7 @@ public class FileExplorer extends JProgram {
                         pan.setLayout(new GridLayout(le2 > 5 ? le2 / 5 : 3, 1));
                         if (!max) setSize(pa.getSize());
                         for (File fi : z.listFiles()) {
-                            Icon ic = new Icon(fi);
+                            Icon ic = new Icon(fi, false, Main.dark ? Color.WHITE : Color.BLACK);
                             ic.addActionListener(l -> {
                                 if (fi.isDirectory()) {
                                     field.setText(fi.getAbsolutePath());
@@ -90,6 +89,11 @@ public class FileExplorer extends JProgram {
         pa.setLayout(new BoxLayout(pa, BoxLayout.Y_AXIS));
         setSize(pa.getSize());
         setSize(650, 450);
+
+        if (Main.dark) {
+            pan.setBackground(Color.DARK_GRAY.darker());
+            field.setBackground(Color.LIGHT_GRAY);
+        }
 
         setContentPane(pa);
     }

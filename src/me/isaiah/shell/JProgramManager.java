@@ -26,12 +26,13 @@ public class JProgramManager {
                 Manifest m = jar.getManifest();
                 String main = m.getMainAttributes().getValue(Name.MAIN_CLASS);
                 classLoader = new ProgramClassLoader(new ProgramLoader(), getClass().getClassLoader(), main, f);
+
                 JProgram program = classLoader.plugin;
                 ProgramInfo i = program.getClass().getAnnotation(ProgramInfo.class);
                 ProgramInfo info = i == null ? info = DemoInfo.class.getAnnotation(ProgramInfo.class) : i;
                 String name = info.name();
 
-                if (name.equalsIgnoreCase("JFrame"))  name = f.getName().substring(0, f.getName().indexOf(".jar"));
+                if (name.equalsIgnoreCase("JFrame")) name = f.getName().substring(0, f.getName().indexOf(".jar"));
 
                 if (!Main.pr.contains(f.getAbsolutePath())) {
                     Main.pStorage.getParentFile().mkdirs();
@@ -39,11 +40,13 @@ public class JProgramManager {
                     Main.pr.add(f.getAbsolutePath());
                     Main.showNotification("Registered \"" + name + "\" to Programs menu", 5000, 300, 60);
                 }
-                StartMenu.programs.add(name + " " + info.version()).addActionListener((l) -> {
+
+                StartMenu.programs.add(name + " " + info.version()).addActionListener(l -> {
                     program.setVisible(true);
                     program.setSize(info.width(), info.height());
                     Main.p.add(program);
                 });
+
                 if (b) {
                     program.setVisible(true);
                     program.setSize(info.width(), info.height());

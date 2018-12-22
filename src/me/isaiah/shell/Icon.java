@@ -3,7 +3,6 @@ package me.isaiah.shell;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,24 +13,27 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileSystemView;
 
 public class Icon extends JLabel {
 
     private static final long serialVersionUID = 1L;
     private static DefaultIconPack pack;
     public boolean hasIcon;
-    
-    public Icon(File f) {
-        this(f, false);
-    } 
+    private File f;
 
-    public Icon(File f, boolean lis) {
+    public Icon(File f) {
+        this(f, false, Color.BLACK);
+    }
+
+    public Icon(File f, boolean lis, Color fg) {
         super(f.getName());
-        this.setForeground(Color.WHITE);
+        this.setForeground(fg);
         if (null == pack)
             pack = new DefaultIconPack();
 
         hasIcon = false;
+        this.f = f;
         try {
             setIcon(f.getName(), f.isDirectory());
         } catch (IOException e) { e.printStackTrace(); }
@@ -40,6 +42,7 @@ public class Icon extends JLabel {
         this.setVerticalTextPosition(SwingConstants.BOTTOM);
         this.setHorizontalTextPosition(SwingConstants.CENTER);
         this.setHorizontalAlignment(SwingConstants.CENTER);
+
         if (lis) this.addActionListener(l -> Main.newFileExplorer(f));
     }
 
@@ -53,11 +56,11 @@ public class Icon extends JLabel {
         }
 
         if (name.endsWith(".exe")) {
-            if (name.startsWith("ZunoZap")) setIcon("zunozapfile.png"); else setIcon("exe.png");
+            setIcon("exe.png");
             setText(name.substring(0, name.lastIndexOf(".")));
         }
 
-        if (name.endsWith(".png") || name.endsWith(".jpg")) setIcon("img.png");
+        if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) setIcon("img.png");
 
         if (getText().length() > 14) this.setFont(new Font("Arial", Font.PLAIN, 7));
         else this.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -65,27 +68,33 @@ public class Icon extends JLabel {
             setIcon(pack.folder);
             return;
         }
-        if (!hasIcon)setIcon(pack.blank);
+        
+        if (!hasIcon) setIconFromSystem();
+        if (!hasIcon) setIcon(pack.blank);
     }
 
-    public void setIcon(Image i) throws IOException {
-        this.setIcon(new ImageIcon(i));
+    public void setIconFromSystem() {
+        ImageIcon icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(f);
+        icon.setImage(icon.getImage().getScaledInstance(28, 28, 0));
+        this.setIcon(icon);
+        hasIcon = getIcon() != null;
+    }
+
+    @Override
+    public void setIcon(javax.swing.Icon i) {
+        super.setIcon(i);
         hasIcon = true;
     }
 
     public void setIcon(String name) throws IOException {
         ImageIcon icon = new ImageIcon(ImageIO.read(Icon.class.getClassLoader().getResourceAsStream(name)));
-        icon.setImage(icon.getImage().getScaledInstance(40, 40, 0));
+        icon.setImage(icon.getImage().getScaledInstance(38, 38, 0));
         this.setIcon(icon);
-        hasIcon = true;
     }
 
     public void addActionListener(ActionListener l) {
         this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                l.actionPerformed(null);
-            }
+            @Override public void mouseClicked(MouseEvent e) { l.actionPerformed(null); }
         });
     }
 

@@ -25,6 +25,7 @@ import me.isaiah.shell.api.JProgram;
 
 @Deprecated
 public class MiniBrowser extends JProgram {
+
     private static final long serialVersionUID = 1L;
     private JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -34,13 +35,12 @@ public class MiniBrowser extends JProgram {
         createNewTab();
         getContentPane().add(tabbedPane);
 
-        JMenu fileMenu = new JMenu("File");
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = menuBar.add(new JMenu("File"));
         fileMenu.add(new JMenu("New Tab")).addMouseListener(new MouseAdapter(){ @Override public void mouseClicked(MouseEvent e) { createNewTab(); }});
         fileMenu.addSeparator();
         fileMenu.setMnemonic('F');
-
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(fileMenu);
         setJMenuBar(menuBar);
     }
 
@@ -98,7 +98,7 @@ class WebToolBar extends JToolBar implements HyperlinkListener {
     private JTextField urlTextField;
 
     public WebToolBar(WebBrowserPane browser) {
-        super("Web Navigation");
+        super("Navigation");
 
         webBrowserPane = browser;
         webBrowserPane.addHyperlinkListener(this);
@@ -113,9 +113,9 @@ class WebToolBar extends JToolBar implements HyperlinkListener {
         });
 
         backButton = new JButton("<");
-        backButton.addActionListener((l) -> urlTextField.setText(webBrowserPane.back().toString()));
+        backButton.addActionListener(l -> urlTextField.setText(webBrowserPane.back().toString()));
         forwardButton = new JButton(">");
-        forwardButton.addActionListener((l) -> urlTextField.setText(webBrowserPane.forward().toString()));
+        forwardButton.addActionListener(l -> urlTextField.setText(webBrowserPane.forward().toString()));
         add(backButton);
         add(forwardButton);
         add(urlTextField);
@@ -128,4 +128,5 @@ class WebToolBar extends JToolBar implements HyperlinkListener {
             urlTextField.setText(url.toString());
         }
     }
+
 }

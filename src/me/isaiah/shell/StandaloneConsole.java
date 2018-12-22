@@ -17,7 +17,7 @@ public class StandaloneConsole extends DebugConsole {
     public StandaloneConsole() {
         DebugConsole.init();
         JFrame fr = new JFrame();
-       
+
         area.setBackground(Color.BLACK);
         area.setForeground(Color.LIGHT_GRAY);
         area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -33,7 +33,7 @@ public class StandaloneConsole extends DebugConsole {
 
         fr.setContentPane(pan);
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        fr.setSize(800, 550);
+        fr.setSize(800, 450);
         fr.validate();
         fr.setVisible(true);
     }

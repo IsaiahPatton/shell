@@ -1,33 +1,45 @@
 package me.isaiah.shell;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.programs.ActiveDesktop;
+import me.isaiah.shell.programs.Browser;
 import me.isaiah.shell.programs.Calc;
 import me.isaiah.shell.programs.Console;
 import me.isaiah.shell.programs.MineSweeper;
-import me.isaiah.shell.programs.MiniBrowser;
 import me.isaiah.shell.programs.ProgramManager;
+import me.isaiah.shell.programs.WordPadFX;
 import me.isaiah.shell.programs.ZunoZapSwing;
 
 public class StartMenu extends JProgram {
 
     private static final long serialVersionUID = 1L;
-    private static StartMenu i;
-    private static boolean isOpen = false;
+    protected static StartMenu i;
+    public static boolean isOpen = false;
     protected static final JMenu programs = new JMenu("Programs");
 
     public static void start() {
@@ -48,6 +60,8 @@ public class StartMenu extends JProgram {
     }
 
     public static void stop() {
+        if (null == i || !isOpen) return;
+
         isOpen = false;
         i.dispose();
     }
@@ -71,40 +85,76 @@ public class StartMenu extends JProgram {
         super("Start");
 
         StartMenu.i = this;
-        JPanel p = new JPanel();
+        Font f = new JLabel().getFont();
+        JPanel p = new JPanel() {
+            @Override
+            public void paint(Graphics g) {
+                g.setColor(Color.LIGHT_GRAY.brighter());
+                g.setFont(f);
+                g.drawString("Welcome " + System.getProperty("user.name"), 58, 48);
+                g.drawImage(new ImageIcon(DefaultIconPack.user).getImage(), 8, 13, null);
+                super.paint(g);
+            }
+        };
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        ((JLabel)p.add(new JLabel("Welcome " + System.getProperty("user.name")))).setBorder(
-                BorderFactory.createEmptyBorder(10, 5, 15, 5));
+
+        BasicInternalFrameUI ui = ((BasicInternalFrameUI)getUI());
+        ui.setNorthPane(null);
+        Color black = new Color(0,0,0);
+        p.setOpaque(false);
+        setBackground(black);
+
+        JLabel usr = new JLabel();
+        usr.setBorder(BorderFactory.createEmptyBorder(50, 8, 30, 8));
+        p.add(usr);
 
         JMenuBar ba = new JMenuBar();
 
-        programs.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        ba.add(new JMenu(" Exit ")).addMouseListener(new MouseClick() { @Override public void click(MouseEvent e) {System.exit(0);}});
-        ba.add(new JMenu(" About ")).addMouseListener(new MouseClick(){ @Override public void click(MouseEvent e) {Main.about();}});
+        programs.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
 
         final File root = new File(System.getProperty("user.home") + File.separator + "desktop");
 
-        programs.setMenuLocation(programs.getLocation().x + 100, programs.getLocation().y);
-        programs.add("Web Browser").addActionListener(l -> Main.startBrowser());
+        ZDesktopPane z = Main.p;
+        programs.setMenuLocation(programs.getLocation().x + 80, programs.getLocation().y);
+        programs.add("Web Browser").addActionListener(l -> Browser.run());
         programs.add("Web Browser Lite").addActionListener(l -> new ZunoZapSwing());
         programs.add("File Explorer").addActionListener(l -> Main.newFileExplorer(root));
         programs.add("NotePad").addActionListener(l -> Main.emptyNotePad());
-        programs.add("Termanal").addActionListener(l -> Main.start(new Console(), 850, 500));
-        programs.add("Task Manager").addActionListener(l -> Main.taskManager());
-        programs.add("JEditorPane Browser").addActionListener(l -> Main.start(new MiniBrowser(), 300, 500));
-        programs.add("Calcalator").addActionListener(l -> Main.start(new Calc(), 200, 200));
-        programs.add("Minesweeper").addActionListener(l -> Main.start(new MineSweeper(), 250, 350));
-        programs.add("Active Desktop Test").addActionListener(l -> new ActiveDesktop()); // Testing
+        programs.add("WordPadFX").addActionListener(l -> z.add(new WordPadFX(), 500, 400));
+        programs.add("Termanal").addActionListener(l -> z.add(new Console(), 850, 500));
+        // programs.add("JEditorPane Browser").addActionListener(l -> z.add(new MiniBrowser(), 300, 500));
+        programs.add("Calcalator").addActionListener(l -> z.add(new Calc(), 200, 200));
+        programs.add("Minesweeper").addActionListener(l -> z.add(new MineSweeper(), 250, 350));
+        programs.add("Active Desktop").addActionListener(l -> new ActiveDesktop()); // Testing
 
         JMenu sys = new JMenu("System");
-        sys.setMenuLocation(sys.getLocation().x + 100, sys.getLocation().y);
-        sys.add("Program Manager").addActionListener(l -> Main.start(new ProgramManager(), 500, 500));
-        sys.add("DebugConsole").addActionListener(l -> Main.start(new DebugConsole(), 850, 500));
+        sys.setMenuLocation(sys.getLocation().x + 80, sys.getLocation().y);
+        sys.add("Program Manager").addActionListener(l -> z.add(new ProgramManager(), 500, 500));
+        sys.add("DebugConsole").addActionListener(l -> z.add(new DebugConsole(), 850, 500));
+        sys.add("Task Manager").addActionListener(l -> Main.taskManager());
+
+        JPanel tiles = new JPanel();
+        tiles.setMinimumSize(new Dimension(100,400));
+        ((Tile)tiles.add(new Tile("calc"))).addActionListener(l -> z.add(new Calc(), 200, 200));
+        ((Tile)tiles.add(new Tile("tilefold"))).addActionListener(l -> Main.newFileExplorer(root));
+        ((Tile)tiles.add(new Tile("web"))).addActionListener(l -> new ZunoZapSwing());
 
         ba.add(sys);
         ba.add(programs);
+
+        ba.add(Box.createVerticalStrut(5));
+        ba.add(new JMenu(" About ")).addMouseListener(MouseClick.click(e -> Main.about()));
+        ba.add(new JMenu(" Exit ")).addMouseListener(MouseClick.click(e -> System.exit(0)));
+
         ba.setLayout(new GridLayout(0,1));
-        p.add(ba);
+
+        JPanel b = new JPanel();
+        b.setLayout(new BoxLayout(b, BoxLayout.X_AXIS));
+        b.add(ba);
+        b.add(Box.createHorizontalStrut(4));
+        b.add(tiles);
+        p.add(b);
+        ba.setBackground(Color.LIGHT_GRAY);
         setContentPane(p);
 
         addInternalFrameListener(new InternalFrameAdapter(){
@@ -112,14 +162,42 @@ public class StartMenu extends JProgram {
         });
 
         putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);
-        getRootPane().setWindowDecorationStyle(JRootPane.NONE);
         this.setMaximizable(false);
+        this.setResizable(false);
         this.setIconifiable(false);
         setVisible(true);
         pack();
 
         Main.p.add(this);
         Main.p.moveToFront(this);
+    }
+
+    class Tile extends JButton {
+
+        private static final long serialVersionUID = 1L;
+        public Tile(String txt) {
+            super(txt);
+            try {
+                setIcon(txt + ".png");
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+        
+        @Override
+        public void paint(Graphics g) {
+            g.drawImage(((ImageIcon)getIcon()).getImage(), 0, 0, getWidth(), getWidth(), null);
+        }
+
+        public void setIcon(String name) throws IOException {
+            ImageIcon icon = new ImageIcon(ImageIO.read(Icon.class.getClassLoader().getResourceAsStream(name)));
+            icon.setImage(icon.getImage());
+            this.setIcon(icon);
+        }
+        
+        public Dimension getPreferredSize() {
+            int s =  getIcon().getIconWidth();
+            return new Dimension(s,s);
+        }
+        
     }
 
 }

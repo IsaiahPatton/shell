@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,9 +18,11 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,23 +37,34 @@ import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.text.DefaultCaret;
 
-import javafx.embed.swing.JFXPanel;
 import me.isaiah.shell.api.JProgram;
-import me.isaiah.shell.programs.Browser;
-import me.isaiah.shell.programs.ProgramManager;
+import me.isaiah.shell.api.JWebApp;
+import me.isaiah.shell.programs.ProgramFileTypeOpener;
 
 public class Main {
 
     public static final String NAME = "Z Desktop Envirement";
     public static final String VERSION = "0.5-dev";
-    public static final Runtime r = Runtime.getRuntime();
-    public static final int ram = (int) ((r.maxMemory() / 1024) / 1024);
-    private static String mem;
-    public static JPanel taskbar = new JPanel();
-    public static final ZDesktopPane p = new ZDesktopPane();
+    public static final String INFO = "Version " + VERSION + " on Java %s<br>"
+            + "Installed RAM:%s<p>Made possible by<br>- Calculator @ javacodex.com<br>- MineSweeper @ java2s.com</p>";
 
-    private static JProgramManager pm;
+    public static final Runtime r = Runtime.getRuntime();
+    public static final int ram = (int) r.maxMemory() / 1024 / 1024;
+    public static JPanel taskbar = new JPanel();
+    private static String mem;
+
+    public static JFrame f = new JFrame();
+    public static final ZDesktopPane p = new ZDesktopPane(f);
+
+    public static boolean dark = false;
+
+    public static JProgramManager pm;
     protected static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
+
+    // Config values used for custom versions
+    public static boolean undecorated = true;
+    public static boolean fullscreen = true;
+    public static boolean visible = true;
 
     public static ArrayList<String> pr = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
@@ -68,38 +80,26 @@ public class Main {
             return b;
         }
     };
-    private static JFrame f;
 
     @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
+    public static void init() {
         DebugConsole.init();
-        if (ram < 64) System.err.println("JVM memory (" + ram + " MB) is not > 64 MB for good proformance!");
 
-        if (ram < 256)
-            System.err.println("JVM max memory of " + ram + " MB does not meet the required 256 MB for web browsing");
+        if (ram < 12) throw new OutOfMemoryError("JVM -Xmx < 12mb");
+        if (ram < 96) System.err.println("JVM memory (" + ram + " MB) is not > 96 MB for good proformance!");
+
+        if (ram < 250)
+            System.err.println("JVM memory of " + ram + "mb is < than the required 256mb for web browsing");
 
         double m = ram;
-        if (m > 1023) {
+        if (m >= 1024) {
             m = m / 1024;
             String ms = String.valueOf(m);
             if (ms.split("[.]")[1].length() > 3) mem = Double.valueOf(ms.substring(0, ms.indexOf(".") + 2)) + " GB";
             else mem = m + " GB";
         } else mem = m + " MB";
 
-        System.out.println("Version " + VERSION);
-
-        f = new JFrame();
         p.setBackground(new Color(51, 153, 255));
-
-        JMenuBar b = new JMenuBar();
-
-        b.add(new JMenu(" Exit ")).addMouseListener(new MouseClick() { @Override public void click(MouseEvent e) {System.exit(0);}});
-        b.add(new JMenu(" About ")).addMouseListener(new MouseClick(){ @Override public void click(MouseEvent e) {about();}});
-
-        JMenu sys = new JMenu("System");
-        sys.add("Program Manager").addActionListener(l -> start(new ProgramManager(), 500, 500));
-        sys.add("DebugConsole").addActionListener(l -> start(new DebugConsole(), 850, 500));
-        b.add(sys);
 
         if (pStorage.exists()) {
             try {
@@ -109,63 +109,85 @@ public class Main {
                 ois.close();
             } catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
         }
+
         pm = new JProgramManager();
         for (String s : pr) {
             try {
-                File program = new File(s);
-                System.err.println(program.getAbsolutePath());
-
-                pm.loadProgram(program);
-            } catch (Exception e) { System.err.println("[ProgramManager]: Unable to load '" + s + "':" + e.getLocalizedMessage());}
+                pm.loadProgram(new File(s));
+            } catch (Exception e) { System.err.println("Program Manager Unable to load '" + s + "':" + e.getLocalizedMessage());}
         }
-
-        //b.add(programs);
-        //f.setJMenuBar(b);
 
         p.setVisible(true);
 
         JPanel base = new JPanel();
-        taskbar.setMaximumSize(new Dimension(10000, 50));
-
-        taskbar.setLayout(new BorderLayout());
         JButton menu = new JButton("Menu");
-        taskbar.add(menu, BorderLayout.WEST);
-        taskbar.add(b, BorderLayout.EAST);
         menu.setBackground(Color.GREEN);
-        b.setOpaque(false);
-        taskbar.setBackground(new Color(31, 70, 250));
+        menu.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GREEN.darker(), 3), menu.getBorder()));
+        menu.addMouseListener(MouseClick.click(e -> StartMenu.start()));
 
-        menu.addMouseListener(new MouseClick() { @Override public void click(MouseEvent e) { StartMenu.start(); }});
+        JLabel t = new JLabel();
+        t.setText(getTime());
+        t.setOpaque(true);
+        t.setForeground(new Color(198, 198, 198));
+        t.setBackground(new Color(37, 138, 252));
+        t.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 4));
+
+        Timer timer = new Timer(20000, al -> t.setText(getTime()));
+        timer.start();
+
+        taskbar.setMaximumSize(new Dimension(10000, 50));
+        taskbar.setLayout(new BorderLayout());
+        taskbar.add(menu, BorderLayout.WEST);
+        taskbar.add(t, BorderLayout.EAST);
+        taskbar.setBackground(new Color(31, 70, 250));
 
         base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS));
         base.add(p);
         base.add(taskbar);
         taskbar.setPreferredSize(new Dimension(taskbar.getPreferredSize().width, taskbar.getPreferredSize().height + 10));
 
+        f.setUndecorated(undecorated);
         f.setContentPane(base);
-        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        f.setUndecorated(true);
-        f.setMaximumSize(new Dimension(500,500));
         f.pack();
-        f.setVisible(true);
+        if (visible) f.setVisible(true);
+        if (fullscreen) f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         pm = new JProgramManager();
         Desktop.init();
+        setDefaultBackground(base);
 
-        String l = getUrlSource("https://api.github.com/repos/isaiahpatton/shell/releases/latest");
-        if (!l.equalsIgnoreCase("internet")) {
-            l = l.substring(l.indexOf("\"tag_name\":\"") + 12);
-            l = l.substring(0, l.indexOf("\","));
-        } else showNotification("Could not connect to api.github.com\nto get update infomation.", new Font("Arial", Font.PLAIN, 13),
-                5000, 320, 60);
+        new UpdateCheck();
 
-        if (!l.equalsIgnoreCase("internet") && !l.equalsIgnoreCase(VERSION))
-            showNotification("A new update is out!\n  Current version: " + VERSION + "\n  Latest version: "
-                    + l + "\nhttp://isaiahpatton.github.io/jshell", new Font("Arial", Font.BOLD, 14), 10000, 420, 110);
         f.validate();
+    }
+
+    @SuppressWarnings("deprecation")
+    public static String getTime() {
+        Date d = new Date();
+        String[] txt = d.toString().split(" ");
+        int hour = d.getHours();
+        String apm = " AM";
+        if (hour > 13) {
+            hour -= 12;
+            apm = " PM";
+        }
+
+        txt[3] = "" + hour + ":" + d.getMinutes() + apm;
+        txt[4] = "";
+
+        String tx = "";
+        for (String tx2 : txt) tx += tx2 + " ";
+        return tx;
+    }
+
+    public static void setDefaultBackground(JPanel base) {
         try {
-            p.setBackground(ImageIO.read(new URL("https://avatars.mds.yandex.net/get-pdb/33827/369cb281-1bb7-448d-9df1-cbe68da08025/orig")));
+            p.setBackground(ImageIO.read(Main.class.getClassLoader().getResource("bg.jpg")));
         } catch (IOException e1) { e1.printStackTrace(); }
+    }
+
+    public static void main(String[] args) {
+        init();
     }
 
     public static String getUrlSource(String url) {
@@ -190,34 +212,32 @@ public class Main {
         Notification n = new Notification(tex, ms);
         n.setSize(width,height);
         n.getContent().setFont(fo);
-        n.setLocation((f.getWidth() - width) - 5, (f.getHeight() - height) - 50);
+        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Notification.shown - 1) * (3 + height)));
         n.validate();
-        start(n, width, height);
+        p.add(n, width, height);
     }
 
-    public static String getInfo() {
-        return "Version " + VERSION + " on Java " + System.getProperty("java.version") + "\n"
-                + "Installed RAM: " + mem + "\n\nMade possible by:\n - Calculator @ javacodex.com\n - MineSweeper @ java2s.com";
-    }
-
-    protected static void newFileExplorer(File file) {
+    public static void newFileExplorer(File file) {
         if (file.isDirectory()) {
             FileExplorer e = new FileExplorer(file);
-            start(e, e.getWidth(), e.getHeight());
+            p.add(e, e.getWidth(), e.getHeight());
         } else {
             String name = file.getName();
             if (name.endsWith(".exe"))
                 JOptionPane.showInternalMessageDialog(p, "Unsupported File type", "Explorer", 0);
-            
-            if (name.endsWith(".png") || name.endsWith(".jpg")) newImageView(file);
+            else if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) 
+                newImageView(file);
 
-            if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
+            else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
                 try { newNotePad(file); } catch (IOException e) { e.printStackTrace(); showNotification(e.getMessage(), 5000); }
-            if (name.endsWith(".jar")) pm.loadProgram(file, true);
+            else if (name.endsWith(".jar")) pm.loadProgram(file, true);
+
+            else
+                p.add(new ProgramFileTypeOpener(file));
         }
     }
-    
-    protected static void newImageView(File img) {
+
+    public static void newImageView(File img) {
         JLabel l = new JLabel();
         try {
             l.setIcon(new ImageIcon(ImageIO.read(img)));
@@ -238,7 +258,7 @@ public class Main {
         } catch (IOException e) { e.printStackTrace(); showNotification(e.getMessage(), 5000); }
     }
 
-    protected static void newNotePad(File file) throws IOException {
+    public static void newNotePad(File file) throws IOException {
         JProgram inf = new JProgram("[NotePad] " + file.getName());
         String text = "";
         int i = 0;
@@ -267,6 +287,18 @@ public class Main {
                 }
             } catch (IOException e) { showNotification(e.getMessage(), 3500); e.printStackTrace(); }
         });
+        
+        mf.add("Open as JWebApp").addActionListener(l -> {
+            JWebApp w = new JWebApp(a.getText());
+            w.setVisible(true);
+            Main.p.add(w);
+        });
+
+        if (dark) {
+            m.setBackground(Color.LIGHT_GRAY);
+            a.setBackground(Color.DARK_GRAY.darker());
+            a.setForeground(Color.LIGHT_GRAY);
+        }
 
         pa.add(new JScrollPane(a));
         m.add(mf);
@@ -278,13 +310,6 @@ public class Main {
         p.add(inf);
     }
 
-    @Deprecated
-    protected static void startBrowser() {
-        new JFXPanel(); // init JavaFX
-        System.out.println("Starting ZunoZap");
-        Browser.runAsProgram();
-    }
-
     protected static final void taskManager() {
         JProgram inf = new JProgram("Task Manager");
         JPanel pan = new JPanel();
@@ -292,27 +317,25 @@ public class Main {
         try {
             a.setText(getTasks());
         } catch (IOException | InterruptedException e1) { e1.printStackTrace(); }
-        JScrollPane bar = new JScrollPane();
-        bar.setViewportView(a);
+        pan.add(new JScrollPane(a));
         a.setMargin(new Insets(0, 5, 5, 5));
         ((DefaultCaret)a.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-        new Timer(4000, (l) -> {
+        new Timer(4000, l -> {
             try { a.setText(getTasks()); } catch (IOException | InterruptedException e) { e.printStackTrace(); }
         }).start(); 
         a.setEditable(false);
         pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
-        pan.add(bar);
         inf.setContentPane(pan);
-        start(inf, 550, 350);
+        p.add(inf, 550, 350);
     }
 
     private static final String getTasks() throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("tasklist").redirectErrorStream(true);
         Process process = processBuilder.start();
         String s = "";
-        try (BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
-            String readLine;
-            while ((readLine = processOutputReader.readLine()) != null) s += readLine + "\n";
+        try (BufferedReader proOut = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+            String line;
+            while ((line = proOut.readLine()) != null) s += line + "\n";
 
             process.waitFor();
         }
@@ -321,29 +344,12 @@ public class Main {
     }
 
     protected static final void about() {
-        JProgram inf = new JProgram("About", false, true, false);
-        JPanel pan = new JPanel();
-        JTextArea n = new JTextArea(NAME);
-        n.setFont(new Font(n.getFont().getName(), Font.BOLD, 24));
-        JTextArea a = new JTextArea(getInfo());
-        a.setEditable(false);
-        a.setMargin(new Insets(12, 15, 15, 15));
-        n.setEditable(false);
-        n.setMargin(new Insets(15, 15, 1, 15));
-        pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
-        pan.add(n);
-        pan.add(a);
-        inf.setSize(300, 300);
-        inf.setContentPane(pan);
-        inf.setVisible(true);
-        inf.pack();
-        p.add(inf);
-    }
-
-    public static final void start(JProgram j, int width, int height) {
-        j.setIconifiable(true);
-        j.setSize(width, height);
-        p.add(j);
+        JWebApp w = new JWebApp("<title>About</title><div style='background-color:#e6e6e6;padding-bottom:8px;padding-right:14px;"
+                + "padding-left:14px;'><h1>" + NAME + "</h1><hr>" + String.format(INFO, 
+                        System.getProperty("java.version"), mem) + "</div>");
+        w.setResizable(false);
+        w.setVisible(true);
+        p.add(w);
     }
 
 }

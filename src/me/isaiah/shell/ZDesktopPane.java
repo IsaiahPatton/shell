@@ -4,20 +4,27 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
+
 import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+
+import me.isaiah.shell.api.JProgram;
 
 public class ZDesktopPane extends JDesktopPane {
 
     private static final long serialVersionUID = 1L;
     private Image img = null;
+    private JFrame f;
 
-    public ZDesktopPane() {
+    public ZDesktopPane(JFrame parent) {
         super();
+        this.f = parent;
+        this.addMouseListener(MouseClick.click(e -> StartMenu.stop()));
     }
 
     public void setBackground(Image img) {
-        this.img = img.getScaledInstance(Main.p.getWidth(), Main.p.getHeight(), 0);
+        this.img = img.getScaledInstance(f.getWidth(), f.getHeight(), 0);
 
         // "Refresh" Screen
         JInternalFrame b = new JInternalFrame();
@@ -31,8 +38,16 @@ public class ZDesktopPane extends JDesktopPane {
         Main.p.remove(b);
     }
 
-    @Override 
+    public void add(JProgram j, int width, int height) {
+        j.setIconifiable(true);
+        j.setSize(width, height);
+        add(j);
+    }
+
+    @Override
     public void addImpl(Component j, Object constraints, int index) {
+        StartMenu.stop();
+
         j.setVisible(true);
         super.addImpl(j, constraints, index);
         moveToFront(j);

@@ -1,7 +1,7 @@
 package me.isaiah.shell.programs;
 
-import java.awt.event.MouseEvent;
 import javax.swing.JRootPane;
+
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -39,13 +39,11 @@ public class ActiveDesktop extends JProgram {
         pack();
         setSize(Main.p.getWidth(), Main.p.getHeight());
         validate();
-        this.addMouseListener(new MouseClick() {
-            @Override public void click(MouseEvent e) { moveToBack(); }
-        });
+        addMouseListener(MouseClick.click(e -> moveToBack()));
         setResizable(false);
+
         Main.p.add(this);
-        Main.p.setComponentZOrder(this, 0);
-        Main.p.moveToBack(this);
+        moveToBack();
     }
 
     public void moveToBack() {

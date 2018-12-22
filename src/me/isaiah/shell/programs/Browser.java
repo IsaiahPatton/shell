@@ -28,7 +28,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import me.isaiah.shell.Main;
-import me.isaiah.shell.api.JProgram;
+import me.isaiah.shell.api.JFXProgram;
 import me.isaiah.shell.api.ProgramInfo;
 import me.isaiah.zunozap.Info;
 import me.isaiah.zunozap.Reader;
@@ -41,12 +41,14 @@ import me.isaiah.zunozap.plugin.PluginBase;
 
 @Info(name="ZunoZap", version="0.6.1", engine = Engine.WEBKIT, enableGC = false)
 @ProgramInfo(name = "ZunoZap Browser", version="0.6.1", authors="Contributers", width=1000, height=650)
+
 public class Browser extends ZunoAPI {
 
     public static final File home = new File(System.getProperty("user.home"), "zunozap");
     private static Reader bmread;
-    
-    public static void runAsProgram() {
+
+    public static void run() {
+        new JFXPanel(); // init JavaFX
         System.out.println("Starting ZunoZap");
         Platform.runLater(() -> {
             try { 
@@ -116,13 +118,11 @@ public class Browser extends ZunoAPI {
         Settings.set(cssDir, scene);
         scene.getStylesheets().add(ZunoAPI.stylesheet.toURI().toURL().toExternalForm());
 
-        //p.loadPlugins();
-        //if (allowPluginEvents()) for (PluginBase pl : p.plugins) pl.onLoad(stage, scene, tb);
+        // p.loadPlugins();
+        if (allowPluginEvents()) for (PluginBase pl : p.plugins) pl.onLoad(stage, scene, tb);
 
-        JProgram inf = new JProgram("ZunoZap for jShell");
-        JFXPanel pan = new JFXPanel();
-        pan.setScene(scene);
-        inf.setContentPane(pan);
+        JFXProgram inf = new JFXProgram("ZunoZap 0.6 Port");
+        inf.setScene(scene);
         inf.setClosable(true);
         inf.setSize(1000, 650);
         inf.setVisible(true);
@@ -173,7 +173,7 @@ public class Browser extends ZunoAPI {
         setUserAgent(engine);
         engine.javaScriptEnabledProperty().set(Options.javascript.b);
 
-        if (isStartTab) engine.loadContent("Full JFX Powered ZunoZap Browser support is exparemental.<br>The Swing/FX combo is recomended");//engine.load("https://start.duckduckgo.com/?ref=zunozap");
+        if (isStartTab) engine.loadContent("Full JFX Powered ZunoZap Browser support is exparemental");//engine.load("https://start.duckduckgo.com/?ref=zunozap");
         else loadSite(url, e);
 
         tab.setContent(vBox);

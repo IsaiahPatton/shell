@@ -20,9 +20,8 @@ public class Console extends JProgram {
     private static JTextPane area;
 
     public Console() {
-        super("Console Output");
         area = new JTextPane();
-        area.setText("ZunoZap OS [Version " + Main.VERSION + "]\n(C) 2018 ZunoZap Contributors");
+        area.setText("ZunoZap Desktop Envirement [Version " + Main.VERSION + "]\n(C) 2018 ZunoZap Contributors");
         area.setBackground(Color.BLACK);
         area.setForeground(Color.LIGHT_GRAY);
         area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 import me.isaiah.shell.api.JProgram;
+import me.isaiah.shell.programs.Browser;
 
 final class ProgramClassLoader extends URLClassLoader {
     private final ProgramLoader loader;
@@ -49,8 +50,8 @@ final class ProgramClassLoader extends URLClassLoader {
                         return;
                     } catch (ClassCastException e2) {
                         if (jarClass.getName().equalsIgnoreCase("me.isaiah.zunozap.Launcher")) {
-                            Main.showNotification("Launching ZunoZap Browser", 2500, 210, 51);
-                            Main.startBrowser();
+                            Main.showNotification("Launching ZunoZap Browser", 2000, 200, 45);
+                            Browser.run();
                         } else {
                             e2.printStackTrace();
                             Main.showNotification("java.lang.ClassCastException:\n\n " + jarClass.getName() + " cannot be cast to:\n"

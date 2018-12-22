@@ -15,6 +15,8 @@ import me.isaiah.shell.api.JProgram;
 
 public class ProgramManager extends JProgram {
 
+    private static final long serialVersionUID = 1L;
+
     public ProgramManager() {
         super("Manage Programs");
         JPanel pane = new JPanel();

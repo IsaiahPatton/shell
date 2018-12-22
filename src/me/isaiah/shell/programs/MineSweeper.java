@@ -29,13 +29,13 @@ import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
 /**
- * Edited for jShell by Isaiah.
+ * Edited by Isaiah.
  * 
  * @author Aniruddha Dutta Chowdhury
  * @googleProfile http://www.google.com/profiles/a.d.chowdhury
  * @blog http://adchowdhury.blogspot.com/
 */
-@ProgramInfo(name = "Minesweeper", version="1.0", authors="Aniruddha Dutta Chowdhury. Ported to jSell by jShell Devs")
+@ProgramInfo(name = "Minesweeper", version="1.0", authors="Aniruddha Dutta Chowdhury.")
 public class MineSweeper extends JProgram implements AWTEventListener, ActionListener {
     private static final long serialVersionUID = 1L;
 
@@ -64,7 +64,6 @@ public class MineSweeper extends JProgram implements AWTEventListener, ActionLis
     }
 
     public MineSweeper() {
-        super("Minesweeper by Aniruddha Dutta Chowdhury");
         setLayout(new BorderLayout());
         add(pnlMain, BorderLayout.CENTER);
         createButtons();

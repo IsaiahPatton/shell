@@ -19,6 +19,15 @@ public class JProgram extends JInternalFrame {
     public JProgram(String title) {
         this(title, true, true, true);
     }
+    
+    /**
+     * Main contructor for programs
+     * The window will be closable, resizable, & maximizable.
+     */
+    public JProgram() {
+        this(null);
+        this.setTitle(getInfo().name());
+    }
 
     public JProgram(String title, boolean resizable, boolean closable, boolean maximizable) {
         super(title, resizable, closable, maximizable);
@@ -26,6 +35,10 @@ public class JProgram extends JInternalFrame {
         this.iconable = true;
         this.moveToFront();
         this.validate();
+    }
+    
+    public ProgramInfo getInfo() {
+        return getClass().getAnnotation(ProgramInfo.class);
     }
 
 }

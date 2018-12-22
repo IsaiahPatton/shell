@@ -23,7 +23,7 @@ import me.isaiah.zunozap.Info;
 import me.isaiah.zunozap.UniversalEngine.Engine;
 
 @Info(name="ZunoZap", version="0.6.1", engine = Engine.CHROME, enableGC = false)
-@ProgramInfo(name = "Browser", version="0.6.1-swing", authors="Contributers", width=1000, height=650)
+@ProgramInfo(name = "Web Browser", version="0.6.1-swing", authors="Contributers", width=1000, height=650)
 
 public class ZunoZapSwing extends JProgram {
 
@@ -34,7 +34,6 @@ public class ZunoZapSwing extends JProgram {
 
     public ZunoZapSwing() {
 
-        super("ZunoZap Browser");
         if (!hasInitFx) new JFXPanel(); // Init JavaFX
 
         tb = new JTabbedPane();
@@ -55,21 +54,20 @@ public class ZunoZapSwing extends JProgram {
         setSize(800, 600);
         setVisible(true);
         getContentPane().setBackground(Color.ORANGE);
-        tb.addMouseListener(new MouseClick() {
-            public void click(MouseEvent m) {
-                Platform.runLater(() -> {
-                    if ((tb.getSelectedIndex() + 1) == tb.getTabCount()) {
-                        try {
-                            newTab("http://google.com", tb);
-                        } catch (IOException e) { e.printStackTrace(); }
-                    } else if (m.getButton() == MouseEvent.BUTTON3) {
-                        Timer timer = new Timer(400, removelis);
-                        timer.setRepeats(false);
-                        timer.start();
-                    }
-                });
-            }
-        });
+        tb.addMouseListener(MouseClick.click(m -> {
+            Platform.runLater(() -> {
+                if ((tb.getSelectedIndex() + 1) == tb.getTabCount()) {
+                    try {
+                        newTab("http://google.com", tb);
+                    } catch (IOException e) { e.printStackTrace(); }
+                } else if (m.getButton() == MouseEvent.BUTTON3) {
+                    Timer timer = new Timer(400, removelis);
+                    timer.setRepeats(false);
+                    timer.start();
+                }
+            });
+        }));
+        
     }
 
     public void newTab(String url, final JTabbedPane tb) throws IOException {
