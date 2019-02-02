@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.event.InternalFrameEvent;
 
 import me.isaiah.shell.FileExplorer;
 import me.isaiah.shell.Main;
@@ -31,7 +32,7 @@ public class ProgramFileTypeOpener extends JProgram {
         b.addActionListener(l -> {
             switch (cb.getSelectedIndex()) {
                 case 0:
-                    try { Main.newNotePad(f); } catch (IOException e) {e.printStackTrace(); }
+                    Main.p.add(new NotePad(f));
                     break;
                 case 1:
                     Main.newImageView(f);
@@ -50,6 +51,7 @@ public class ProgramFileTypeOpener extends JProgram {
                     Main.p.add(w);
                     break;
             }
+            this.fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSING);
             dispose();
         });
         

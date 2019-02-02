@@ -7,12 +7,7 @@ public abstract class MouseClick extends MouseAdapter {
 
     private IClick i;
 
-    @Override public void mouseClicked(MouseEvent e) { click0(e); }
-
-    @Deprecated
-    public void click0(MouseEvent e) {
-        i.click(e);
-    }
+    @Override public void mouseClicked(MouseEvent e) { i.click(e); }
 
     public MouseClick set(IClick i) {
         this.i = i;

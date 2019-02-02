@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.JOptionPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -49,7 +48,6 @@ public class Browser extends ZunoAPI {
 
     public static void run() {
         new JFXPanel(); // init JavaFX
-        System.out.println("Starting ZunoZap");
         Platform.runLater(() -> {
             try { 
                 Browser.main(null);
@@ -173,7 +171,7 @@ public class Browser extends ZunoAPI {
         setUserAgent(engine);
         engine.javaScriptEnabledProperty().set(Options.javascript.b);
 
-        if (isStartTab) engine.loadContent("Full JFX Powered ZunoZap Browser support is exparemental");//engine.load("https://start.duckduckgo.com/?ref=zunozap");
+        if (isStartTab) engine.loadContent("Full JFX Powered ZunoZap Browser support is exparemental");
         else loadSite(url, e);
 
         tab.setContent(vBox);
@@ -191,10 +189,6 @@ public class Browser extends ZunoAPI {
 
     public final void urlChangeLis(UniversalEngine u, WebView web, final WebEngine en, final TextField urlField, final Tab tab, Button bkmark) {
         en.locationProperty().addListener((o,oU,nU) -> Browser.this.changed(u, urlField, tab, oU, nU, bkmark, bmread));
-
-        en.setOnAlert(popupText -> {
-            JOptionPane.showInternalMessageDialog(null, popupText.getData(), "JS Popup", JOptionPane.INFORMATION_MESSAGE);
-        });
         en.titleProperty().addListener((ov, o, n) -> tab.setText(n));
     }
 

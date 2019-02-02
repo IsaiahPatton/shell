@@ -33,14 +33,14 @@ public class ZunoZapSwing extends JProgram {
     public boolean hasInitFx = false;
 
     public ZunoZapSwing() {
-
-        if (!hasInitFx) new JFXPanel(); // Init JavaFX
+        new JFXPanel(); // Init JavaFX
 
         tb = new JTabbedPane();
         removelis = new ActionListener() { public void actionPerformed(ActionEvent e) { 
             tb.remove(tb.getSelectedIndex());
             tb.setSelectedIndex(tb.getTabCount() - 2);
         }};
+
         tb.addTab(" + ", new JTextField("Loading..."));
         tb.setBackgroundAt(0, Color.LIGHT_GRAY);
 

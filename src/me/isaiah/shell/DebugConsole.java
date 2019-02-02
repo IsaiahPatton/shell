@@ -18,8 +18,11 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import me.isaiah.shell.api.JProgram;
+import me.isaiah.shell.api.ProgramInfo;
 
+@ProgramInfo(name = "AdminCMD")
 public class DebugConsole extends JProgram {
+
     private static final long serialVersionUID = 1L;
     protected static JTextPane area = new JTextPane();
     
@@ -28,7 +31,6 @@ public class DebugConsole extends JProgram {
     }
 
     public DebugConsole(boolean canClear) {
-        super("Console Output");
         area.setBackground(Color.BLACK);
         area.setForeground(Color.LIGHT_GRAY);
         area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -36,8 +38,11 @@ public class DebugConsole extends JProgram {
         JTextField f = new JTextField();
         f.setMaximumSize(new Dimension(1000000, 100));
         Commands c = new Commands(area, this);
-        f.addActionListener(l -> { if (canClear || !(f.getText().startsWith("cls") || f.getText().startsWith("clear"))) {
-            c.onCommand(f,l); f.setText("");}});
+        f.addActionListener(l -> { 
+            if (canClear || !(f.getText().startsWith("cls") || f.getText().startsWith("clear"))) {
+                c.onCommand(f,l); f.setText("");
+            }
+        });
         JPanel pan = new JPanel();
         pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
         pan.add(p);
@@ -48,16 +53,17 @@ public class DebugConsole extends JProgram {
     public static void init() {
         PrintStream m = System.out;
         StyledDocument d = area.getStyledDocument();
+
         System.setOut(new PrintStream(new OutputStream() {
             @Override public void write(int b) throws IOException {
                 m.write(b);
-                StyledDocument d = area.getStyledDocument();
                 Style style = d.getStyle(StyleContext.DEFAULT_STYLE);
                 StyleConstants.setForeground(style, Color.LIGHT_GRAY);
                 try {
                     d.insertString(d.getLength(), String.valueOf((char) b), style);
                 } catch (BadLocationException e) { e.printStackTrace(); }
             }}));
+
         PrintStream err = System.err;
         System.setErr(new PrintStream(new OutputStream() {
             @Override public void write(int b) throws IOException {
@@ -70,7 +76,9 @@ public class DebugConsole extends JProgram {
                     e.printStackTrace();
                 }
             }}));
-        System.out.println("ZunoZap OS [Version " + Main.VERSION + "]");
-        System.out.println("(C) 2018 ZunoZap Contributors");
+
+        System.out.println("[Version " + Main.VERSION + "]");
+        System.out.println("(C) 2018-2019 Contributors");
     }
+
 }

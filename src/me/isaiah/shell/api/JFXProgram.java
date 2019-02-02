@@ -2,6 +2,7 @@ package me.isaiah.shell.api;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import me.isaiah.shell.theme.IconPack;
 
 public class JFXProgram extends JProgram {
 
@@ -11,6 +12,8 @@ public class JFXProgram extends JProgram {
     public JFXProgram(String title) {
         super(title);
         e = new JFXPanel();
+
+        this.setFrameIcon(IconPack.get().fxprogram);
 
         setContentPane(e);
         pack();

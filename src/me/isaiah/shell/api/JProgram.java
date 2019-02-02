@@ -1,6 +1,11 @@
 package me.isaiah.shell.api;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+
+import me.isaiah.shell.Main;
 
 /**
  * API class for Program developers
@@ -36,9 +41,24 @@ public class JProgram extends JInternalFrame {
         this.moveToFront();
         this.validate();
     }
+
+    @Override
+    public void setFrameIcon(Icon icon) {
+        if (icon == null || !(icon instanceof ImageIcon)) return;
+
+        super.setFrameIcon(new ImageIcon( ((ImageIcon) icon).getImage().getScaledInstance(16, 16, 0) ));
+    }
+
+    public BasicInternalFrameUI getUI() {
+        return ((BasicInternalFrameUI)super.getUI());
+    }
     
     public ProgramInfo getInfo() {
         return getClass().getAnnotation(ProgramInfo.class);
+    }
+
+    public boolean isDarkModeEnabled() {
+        return Main.dark;
     }
 
 }

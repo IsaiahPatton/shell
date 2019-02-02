@@ -1,6 +1,7 @@
 package me.isaiah.shell.programs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,23 +33,28 @@ public class Calc extends JProgram implements ActionListener{
 
         JPanel panel = new JPanel(new GridLayout(1,1));
         JPanel simple = new JPanel();
-        JPanel advanced = new JPanel(new GridLayout(4,4));
         simple.setLayout(new GridLayout(5, 4));
 
         String buttonLabels = "789/456*123-0.=+";
-        ((JButton)simple.add(new JButton("C"))).addActionListener(a -> result = 0);
-        ((JButton)simple.add(new JButton("\u221A"))).addActionListener(a -> result = Math.sqrt(result));
+        ((JButton)simple.add(new JButton("C"))).addActionListener(a -> {
+            operator = "C";
+            calculate(Double.parseDouble(display.getText()));
+        });
+        ((JButton)simple.add(new JButton("\u221A"))).addActionListener(a -> {
+            operator = "\u221A";
+            calculate(Double.parseDouble(display.getText()));
+        });
         simple.add(new JSeparator(SwingConstants.VERTICAL));
-        ((JButton)simple.add(new JButton("X"))).addActionListener(this);
+        JButton off = ((JButton)simple.add(new JButton("X")));
+        off.addActionListener(l -> {
+            operator = "X";
+            calculate(Double.parseDouble(display.getText()));
+        });
+        off.setBackground(Color.RED);
         for (int i = 0; i < buttonLabels.length(); i++)
             ((JButton)simple.add(new JButton(buttonLabels.substring(i, i + 1)))).addActionListener(this);
 
-        String adbtnLabels = "\u221A";
-        //for (int i = 0; i < adbtnLabels.length(); i++)
-        //    ((JButton)advanced.add(new JButton(adbtnLabels.substring(i, i + 1)))).addActionListener(this);
-
         panel.add(simple);
-       // panel.add(advanced);
         add(panel, "Center");
     }
 

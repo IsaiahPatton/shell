@@ -17,13 +17,16 @@ import javax.swing.JTextField;
 
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
+import me.isaiah.shell.theme.IconPack;
 
+// TODO Create advanced File Manager
 @ProgramInfo(name = "File Explorer")
 public class FileExplorer extends JProgram {
 
     private static final long serialVersionUID = 1L;
 
     public FileExplorer(File folder) {
+        this.setFrameIcon(IconPack.get().folder);
         int le = folder.listFiles().length;
         JPanel pan = new JPanel(new GridLayout(le > 5 ? le / 5 : 3, 1));
         JPanel pa = new JPanel();

@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileSystemView;
 
+import me.isaiah.shell.theme.DefaultIconPack;
+
 public class Icon extends JLabel {
 
     private static final long serialVersionUID = 1L;
@@ -29,6 +31,7 @@ public class Icon extends JLabel {
     public Icon(File f, boolean lis, Color fg) {
         super(f.getName());
         this.setForeground(fg);
+
         if (null == pack)
             pack = new DefaultIconPack();
 
@@ -47,28 +50,27 @@ public class Icon extends JLabel {
     }
 
     public void setIcon(String name, boolean folder) throws IOException {
+        
+        this.setFont(new Font("Arial", Font.PLAIN, this.getFont().getSize() - 1));
 
-        if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html")) 
-            setIcon("textfile.png");
-        if (name.endsWith(".jar")) {
-            if (name.startsWith("ZunoZap")) setIcon("zunozapfile.png"); else setIcon("jar.png");
-            setText(name.substring(0, name.lastIndexOf(".")));
-        }
-
-        if (name.endsWith(".exe")) {
-            setIcon("exe.png");
-            setText(name.substring(0, name.lastIndexOf(".")));
-        }
-
-        if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) setIcon("img.png");
-
-        if (getText().length() > 14) this.setFont(new Font("Arial", Font.PLAIN, 7));
-        else this.setFont(new Font("Arial", Font.PLAIN, 10));
         if (folder) {
             setIcon(pack.folder);
             return;
         }
-        
+
+        if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html")) 
+            setIcon("textfile.png");
+
+        if (name.endsWith(".jar")) {
+            setIcon(name.startsWith("ZunoZap") ? "zunozapfile.png" : "jar.png");
+            setText(name.substring(0, name.lastIndexOf(".")));
+        }
+
+        if (name.endsWith(".exe"))
+            setIcon("exe.png");
+
+        if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) setIcon("img.png");
+
         if (!hasIcon) setIconFromSystem();
         if (!hasIcon) setIcon(pack.blank);
     }
@@ -86,6 +88,7 @@ public class Icon extends JLabel {
         hasIcon = true;
     }
 
+    @Deprecated
     public void setIcon(String name) throws IOException {
         ImageIcon icon = new ImageIcon(ImageIO.read(Icon.class.getClassLoader().getResourceAsStream(name)));
         icon.setImage(icon.getImage().getScaledInstance(38, 38, 0));

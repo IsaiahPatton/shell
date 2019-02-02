@@ -6,10 +6,15 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -17,11 +22,14 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import me.isaiah.shell.api.JProgram;
+import me.isaiah.shell.programs.Console;
 
 public class Commands {
 
     private JTextPane area;
     private Container window;
+    private Random r = new Random();
+
     public Commands(JTextPane p, Container host) {
         this.area = p;
         this.window = host;
@@ -53,7 +61,7 @@ public class Commands {
                 for (Object s : System.getProperties().keySet()) {
                     if (args.length == 1 || ((String)s).startsWith(args[1])) {
                         add(s + "", Color.CYAN);
-                        c(" --> " + System.getProperty((String) s));
+                        c(" --> " + System.getProperty((String) s), Color.LIGHT_GRAY);
                     }
                 }
                 break;
@@ -89,6 +97,21 @@ public class Commands {
                 Color t = new Color(31, 70, 250);
                 Main.taskbar.setBackground(Main.dark ? t.darker() : t);
                 break;
+            case "switchl&f":
+                add("Swiching");
+                LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
+                String clazz = info[r.nextInt(info.length)].getClassName();
+                Main.p.setLAF(clazz);
+                SwingUtilities.updateComponentTreeUI(Main.f);
+                Main.p.removeAll();
+
+                Desktop.reset();
+                Desktop.init();
+                Timer ti = new Timer(1000, a -> Main.p.add(new Console(), 850, 500));
+                ti.setRepeats(false);
+                ti.start();
+
+                break;
             case "help":
                 add("===== Help =====", Color.CYAN);
                 add("HELP       Display this message");
@@ -112,10 +135,6 @@ public class Commands {
 
     private void add(String content) {
         add(content, Color.LIGHT_GRAY);
-    }
-
-    private void c(String content) {
-        c(content, Color.LIGHT_GRAY);
     }
 
     private void add(String content, Color c) {
