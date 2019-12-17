@@ -19,20 +19,22 @@ public class TaskBarTray extends JPanel {
 
         this.setMaximumSize(new Dimension(10000, 50));
 
-        setBackground(new Color(37, 138, 252));
+        Color bg = new Color(0,0,0, 150);
+        setBackground(bg);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 4));
         inst = this;
 
         TrayIcon t = new TrayIcon(getTime(), null);
         t.setOpaque(true);
         t.setForeground(new Color(198, 198, 198));
-        t.setBackground(new Color(37, 138, 252));
+        t.setBackground(bg);
         t.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 4));
 
         Timer timer = new Timer(20000, al -> t.setText(getTime()));
         timer.start();
 
         add(new InternetIcon());
+        add(new PowerIcon());
 
         add(t);
     }
@@ -44,21 +46,16 @@ public class TaskBarTray extends JPanel {
     @SuppressWarnings("deprecation")
     public static String getTime() {
         Date d = new Date();
-        String[] txt = d.toString().split(" ");
+
         int hour = d.getHours();
         String apm = " AM";
         if (hour > 13) {
             hour -= 12;
             apm = " PM";
         }
+        if (hour == 0) hour = 12;
 
-        txt[3] = "" + hour + ":" + d.getMinutes() + apm;
-        txt[4] = "";
-
-        String tx = "";
-        for (String tx2 : txt) tx += tx2 + " ";
-
-        return tx;
+        return hour + ":" + d.getMinutes() + apm + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + (d.getYear() + 1900);
     }
 
 }

@@ -9,7 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 
-import me.isaiah.shell.FileExplorer;
+import me.isaiah.shell.programs.FileExplorer;
 import me.isaiah.shell.Main;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.JWebApp;
@@ -35,7 +35,7 @@ public class ProgramFileTypeOpener extends JProgram {
                     Main.p.add(new NotePad(f));
                     break;
                 case 1:
-                    Main.newImageView(f);
+                    new ImageViewer(f);
                     break;
                 case 2:
                     FileExplorer fe = new FileExplorer(f);

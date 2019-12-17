@@ -1,5 +1,8 @@
 package me.isaiah.shell.api;
 
+import javax.swing.SwingUtilities;
+
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import me.isaiah.shell.theme.IconPack;
@@ -28,7 +31,16 @@ public class JFXProgram extends JProgram {
     }
 
     public void setScene(Scene s) {
-        e.setScene(s);
+        runOnFXThread(() -> {
+            e.setScene(s);
+            SwingUtilities.invokeLater(() -> pack());
+        });
+    }
+
+    public void runOnFXThread(Runnable r) {
+        if (Platform.isFxApplicationThread())
+            r.run();
+        else Platform.runLater(r);
     }
 
 }

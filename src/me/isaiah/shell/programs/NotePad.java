@@ -1,6 +1,5 @@
 package me.isaiah.shell.programs;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.BufferedWriter;
@@ -18,9 +17,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import me.isaiah.shell.Main;
+import me.isaiah.shell.api.Notification;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.JWebApp;
 import me.isaiah.shell.api.ProgramInfo;
+import me.isaiah.shell.theme.IconPack;
 
 @ProgramInfo(name = "NotePad", version="1.1")
 public class NotePad extends JProgram {
@@ -29,6 +30,7 @@ public class NotePad extends JProgram {
     private File file;
 
     public NotePad(File fil) {
+        this.setFrameIcon(IconPack.get().text);
         this.file = fil;
         String text = "";
         int i = 0;
@@ -65,7 +67,7 @@ public class NotePad extends JProgram {
                     writer.write(line);
                     writer.newLine();
                 }
-            } catch (IOException e) { Main.showNotification(e.getMessage(), 3500); e.printStackTrace(); }
+            } catch (IOException e) { Notification.show(e.getMessage(), 3500); e.printStackTrace(); }
         });
 
         mf.add("Open as JWebApp").addActionListener(l -> {
@@ -73,12 +75,6 @@ public class NotePad extends JProgram {
             w.setVisible(true);
             Main.p.add(w);
         });
-
-        if (isDarkModeEnabled()) {
-            m.setBackground(Color.LIGHT_GRAY);
-            a.setBackground(Color.DARK_GRAY.darker());
-            a.setForeground(Color.LIGHT_GRAY);
-        }
 
         pa.add(new JScrollPane(a));
         m.add(mf);

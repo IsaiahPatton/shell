@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
-@ProgramInfo(name = "Calc")
+@ProgramInfo(name = "Calculator", width=200, height=300)
 public class Calc extends JProgram implements ActionListener{
 
     private static final long serialVersionUID = 1L;
@@ -26,10 +26,11 @@ public class Calc extends JProgram implements ActionListener{
     private boolean calculating = true;
 
     public Calc() {
-        setLayout(new BorderLayout());
+        JPanel p = new JPanel();
+        p.setLayout(new BorderLayout());
 
         display.setEditable(false);
-        add(display, "North");
+        p.add(display, "North");
 
         JPanel panel = new JPanel(new GridLayout(1,1));
         JPanel simple = new JPanel();
@@ -55,7 +56,9 @@ public class Calc extends JProgram implements ActionListener{
             ((JButton)simple.add(new JButton(buttonLabels.substring(i, i + 1)))).addActionListener(this);
 
         panel.add(simple);
-        add(panel, "Center");
+        p.add(panel, "Center");
+        setContentPane(p);
+        //pack();
     }
 
     public void actionPerformed(ActionEvent evt) {

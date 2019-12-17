@@ -1,60 +1,88 @@
 package me.isaiah.shell;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import me.isaiah.shell.Utils.IClick;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
-import me.isaiah.shell.programs.Browser;
-import me.isaiah.shell.programs.Calc;
-import me.isaiah.shell.programs.Console;
-import me.isaiah.shell.programs.MineSweeper;
-import me.isaiah.shell.programs.NotePad;
-import me.isaiah.shell.programs.ProgramManager;
-import me.isaiah.shell.programs.ZunoZapSwing;
+import me.isaiah.shell.programs.*;
+import me.isaiah.shell.programs.console.AdminConsole;
+import me.isaiah.shell.programs.console.Console;
+import me.isaiah.shell.theme.DefaultIconPack;
 import me.isaiah.shell.theme.IconPack;
+import me.isaiah.shell.ui.ModernScrollPane;
 
 @ProgramInfo(name = "Menu")
 public class StartMenu extends JProgram {
 
+    public static void main(String[] args) {
+        IconPack.setIconPack(new DefaultIconPack());
+        JInternalFrame inf = new StartMenu();
+        JFrame f = new JFrame();
+        f.setContentPane(inf);
+        f.setDefaultCloseOperation(3);
+        f.setSize(inf.getPreferredSize());
+        f.setVisible(true);
+    }
+
+    public static TreeMap<String, ArrayList<Class<? extends JProgram>>> nameMap = new TreeMap<>();
+
+    public static void addProgram(Class<? extends JProgram> a) {
+        String title = a.getAnnotation(ProgramInfo.class).name().toLowerCase().substring(0,1);
+        ArrayList<Class<? extends JProgram>> list = nameMap.getOrDefault(title, new ArrayList<Class<? extends JProgram>>());
+        list.add(a);
+        nameMap.put(title, list);
+    }
+
     private static final long serialVersionUID = 1L;
     protected static StartMenu i;
     public static boolean isOpen = false;
-    protected static final JMenu programs = new JMenu("Programs");
     private final File root = new File(System.getProperty("user.home") + File.separator + "desktop");
+    private final JPanel p, tiles;
 
     public static void start() {
         if (isOpen) {
             try {
                 i.setClosed(true);
-                i.fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSING );
+                i.fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSING);
+                Main.p.remove(i);
             } catch (PropertyVetoException e) { e.printStackTrace(); }
             return;
         }
 
         if (null == i) new StartMenu();
 
-        Main.p.add(i, null, 0);
+        Main.p.add(i);
+        Main.p.moveToFront(i);
         isOpen = true;
 
         i.effect();
@@ -68,139 +96,168 @@ public class StartMenu extends JProgram {
     }
 
     public void effect() {
+        int h = Main.p.getHeight() - SystemBar.get.getHeight();
         new Thread(() -> {
-            for (int i = Main.taskbar.getY(); i > (Main.taskbar.getY() - getHeight()); i--) {
+            boolean b = false;
+            for (int i = h; i >= (h - getHeight()); i--) {
                 setLocation(0, i--);
                 setSize(this.getPreferredSize());
                 try {
-                    Thread.sleep(1);
+                    if ((b == !b) && !Main.isLowMemory) Thread.sleep(1);
                 } catch (InterruptedException e1) { e1.printStackTrace(); }
                 validate();
             }
         }).start();
 
-        setLocation(0, Main.taskbar.getY() - getHeight());
         setSize(this.getPreferredSize());
         validate();
     }
 
     public StartMenu() {
         super("Menu", false, false, false);
+        this.setUndecorated(true);
         StartMenu.i = this;
-        Font f = new JLabel().getFont();
-        JPanel p = new JPanel() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public void paint(Graphics g) {
-                g.setColor(Color.LIGHT_GRAY.brighter());
-                g.setFont(f);
-                g.drawString("Welcome " + System.getProperty("user.name"), 58, 48);
-                g.drawImage(IconPack.get().user, 8, 13, null);
-                super.paint(g);
-            }
-        };
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p = new JPanel();
+        p.setBackground(Main.isLowMemory ? new Color(15, 15, 15) : new Color(15, 15, 15, 250));
+        p.setLayout(new BorderLayout());
+        JPanel t = new JPanel();
+        t.setBackground(new Color(20,20,20));
+        t.setBorder(BorderFactory.createEmptyBorder(25,0,0,0));
+        p.add(t, BorderLayout.NORTH);
 
-        BasicInternalFrameUI ui = ((BasicInternalFrameUI)getUI());
-        ui.setNorthPane(null);
-        Color black = new Color(0,0,0);
-        p.setOpaque(false);
-        setBackground(black);
-
-        JLabel usr = new JLabel();
-        usr.setBorder(BorderFactory.createEmptyBorder(50, 8, 30, 8));
-        p.add(usr);
+        setBackground(Color.BLACK);
 
         JMenuBar ba = new JMenuBar();
 
-        programs.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+        addProgram(CopperBrowser.class);
+        addProgram(FileExplorer.class);
+        addProgram(AdminConsole.class);
+        addProgram(PersonalizationSettings.class);
+        addProgram(Console.class);
+        addProgram(WebBrowser.class);
+        addProgram(NotePad.class);
+        addProgram(Calc.class);
+        addProgram(Minesweeper.class);
 
-        ZDesktopPane z = Main.p;
-        programs.setMenuLocation(programs.getLocation().x + 80, programs.getLocation().y);
-        programs.add("Web Browser").addActionListener(l -> Browser.run());
-        programs.add("Web Browser Lite (recommended)").addActionListener(l -> z.add(new ZunoZapSwing(), 600, 400));
-        programs.add("File Explorer").addActionListener(l -> Main.newFileExplorer(root));
-        programs.add("NotePad").addActionListener(l -> z.add(new NotePad(null), 500, 400));
-        programs.add("Termanal").addActionListener(l -> z.add(new Console(), 850, 500));
-        programs.add("Calcalator").addActionListener(l -> z.add(new Calc(), 200, 200));
-        programs.add("Minesweeper").addActionListener(l -> z.add(new MineSweeper(), 250, 350));
+        this.setOpaque(false);
+        tiles = new JPanel();
+        tiles.setMinimumSize(new Dimension(100,450));
+        tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : new Color(0, 0, 0, 200));
+        tiles.setOpaque(false);
 
-        JMenu sys = new JMenu("System");
-        sys.setMenuLocation(sys.getLocation().x + 80, sys.getLocation().y);
-        sys.add("Program Manager").addActionListener(l -> z.add(new ProgramManager(), 500, 500));
-        sys.add("Admin Termanal").addActionListener(l -> z.add(new DebugConsole(), 850, 500));
-        sys.add("Task Manager").addActionListener(l -> Main.taskManager());
+        ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calc(), 200, 200));
+        ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.newFileExplorer(root));
+        ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new CopperBrowser(), 1200, 800));
 
-        JPanel tiles = new JPanel();
-        tiles.setMinimumSize(new Dimension(100,400));
+        JMenu me = new JMenu(System.getProperty("user.name"));
+        me.setForeground(Color.white);
+        ba.add(me).addMouseListener(Utils.click(e -> Main.about()));
+        me.setIcon(new ImageIcon(IconPack.get().user.getScaledInstance(16, 16, 0)));
+        ba.add(new JSeparator(SwingConstants.VERTICAL));
 
-        ((Tile)tiles.add(new Tile("calc"))).onClick(l -> z.add(new Calc(), 200, 200));
-        ((Tile)tiles.add(new Tile("tilefold"))).onClick(l -> Main.newFileExplorer(root));
-        ((Tile)tiles.add(new Tile("web"))).onClick(l -> z.add(new ZunoZapSwing(), 600, 400));
+        JMenu about = new JMenu("  About  ");
+        about.setForeground(Color.white);
+        ba.add(about).addMouseListener(Utils.click(e -> Main.about()));
 
-        ba.add(sys);
-        ba.add(programs);
+        JMenu exit = new JMenu("  Exit  ");
+        exit.setForeground(Color.white);
+        ba.add(exit).addMouseListener(Utils.click(e -> System.exit(0)));
 
-        ba.add(Box.createVerticalStrut(5));
-        ba.add(new JMenu(" About ")).addMouseListener(MouseClick.click(e -> Main.about()));
-        ba.add(new JMenu(" Exit ")).addMouseListener(MouseClick.click(e -> System.exit(0)));
+        ba.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 
-        ba.setLayout(new GridLayout(0,1));
+        JPanel sort = new JPanel();
+        sort.setLayout(new BoxLayout(sort, BoxLayout.Y_AXIS));
+        sort.setOpaque(false);
+        for (String s : nameMap.keySet()) {
+            JPanel let = new JPanel();
+            let.setBackground(new Color(25, 25, 25, 250));
+            let.setLayout(new GridLayout(0, 1));
+            let.setBorder(BorderFactory.createTitledBorder(new EmptyBorder(4,2,16,2), s.toUpperCase()));
+            ((TitledBorder)let.getBorder()).setTitleColor(Color.WHITE);
+            for (Class<? extends JProgram> str : nameMap.get(s)) {
+                JLabel l = (JLabel)let.add(new JLabel(str.getAnnotation(ProgramInfo.class).name()));
+                l.setIcon(IconPack.scale(IconPack.get().blank, 20, 20));
+                l.setForeground(new Color(225,225,225));
+                l.setBorder(new EmptyBorder(4,0,4,0));
+                l.addMouseListener(Utils.click(m -> {
+                    try {
+                        ProgramInfo i = str.getAnnotation(ProgramInfo.class);
+                        Main.p.add(str.newInstance(), i.width(), i.height());
+                    } catch (InstantiationException | IllegalAccessException e1) {
+                        e1.printStackTrace();
+                    }
+                }));
+            }
+            sort.add(let);
+        }
+        JScrollPane sp = new ModernScrollPane(sort, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.setMaximumSize(new Dimension(228,500));
 
         JPanel b = new JPanel();
+        b.setOpaque(false);
         b.setLayout(new BoxLayout(b, BoxLayout.X_AXIS));
-        b.add(ba);
-        b.add(Box.createHorizontalStrut(4));
+        b.add(sp);
         b.add(tiles);
-        p.add(b);
-        ba.setBackground(Color.LIGHT_GRAY);
+        tiles.setMaximumSize(new Dimension(512, 900));
+        p.add(b, BorderLayout.CENTER);
+        p.add(ba, BorderLayout.SOUTH);
+        ba.setBackground(new Color(20,20,20));
         setContentPane(p);
 
-        addInternalFrameListener(new InternalFrameAdapter(){
-            public void internalFrameClosing(InternalFrameEvent e) { stop(); }
-        });
+        addInternalFrameListener(new InternalFrameAdapter(){public void internalFrameClosing(InternalFrameEvent e) {stop();}});
 
         putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);
+        setDisplayInSystemBar(false);
         setVisible(true);
         pack();
-        Dimension size = this.getPreferredSize();
-        this.setPreferredSize(new Dimension(size.width + 50, size.height + 100));
-
-        Main.p.add(this);
-        Main.p.moveToFront(this);
+        this.setPreferredSize(new Dimension(589, 550));
+        this.setBorder(null);
     }
 
     class Tile extends JComponent {
 
         private static final long serialVersionUID = 1L;
         private Image i;
+        private String display;
 
-        public Tile(String txt) {
+        public Tile(String txt, String name) {
+            this.display = name;
             try {
                 setIcon(txt + ".png");
             } catch (IOException e) { e.printStackTrace(); }
+            this.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         }
 
         @Override
         public void paint(Graphics g) {
-            g.drawImage(i, 0, 0, getWidth(), getWidth(), null);
+            super.paint(g);
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(0, 0, getWidth(), getWidth());
+            g.drawImage(i, (this.getWidth() - 32) / 2, (this.getHeight() - 32) / 2, 32, 32, null);
+            g.setColor(Color.WHITE);
+            g.drawString(display, 4, getHeight() - 5);
         }
 
         public void onClick(IClick c) {
-            this.addMouseListener(MouseClick.click(c));
+            this.addMouseListener(Utils.click(c));
         }
 
         public void setIcon(String name) throws IOException {
-            this.i = ImageIO.read(Icon.class.getClassLoader().getResourceAsStream("tiles/" + name));
+            this.i = ImageIO.read(Main.class.getClassLoader().getResourceAsStream("res/icons/" + name));
         }
 
         @Override
         public Dimension getPreferredSize() {
-            int s = i.getWidth(null);
+            int s = 96;
             return new Dimension(s,s);
         }
 
+    }
+
+    public static void setBackgroundColor(Color c) {
+        i.p.setBackground(c);
+        i.tiles.setBackground(c);
     }
 
 }

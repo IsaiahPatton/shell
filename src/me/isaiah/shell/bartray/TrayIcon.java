@@ -30,7 +30,7 @@ public class TrayIcon extends JLabel {
         icon.setImage(icon.getImage().getScaledInstance(16, 16, 0));
         this.setIcon(icon);
     }
-    
+
     public String[] system(String args, boolean block) {
         return system(args.trim().split(" "), block);
     }
@@ -52,5 +52,16 @@ public class TrayIcon extends JLabel {
         } catch (IOException e) { e.printStackTrace(); }
         return txt.toArray(new String[0]);
     }
+
+    public static OS getOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.startsWith("windows"))
+            return OS.WINDOWS;
+        if (os.startsWith("mac")) return OS.MAC;
+
+        return OS.LINUX;
+    }
+
+    public enum OS { WINDOWS, LINUX, MAC, OTHER }
 
 }

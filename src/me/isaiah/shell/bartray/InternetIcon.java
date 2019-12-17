@@ -8,8 +8,8 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import me.isaiah.shell.Main;
-import me.isaiah.shell.MouseClick;
-import me.isaiah.shell.Multithreading;
+import me.isaiah.shell.SystemBar;
+import me.isaiah.shell.Utils;
 import me.isaiah.shell.api.JProgram;
 
 public class InternetIcon extends TrayIcon {
@@ -19,7 +19,7 @@ public class InternetIcon extends TrayIcon {
     public InternetIcon() {
         super(null, "wifi.png");
 
-        this.addMouseListener(MouseClick.click(e -> {
+        this.addMouseListener(Utils.click(e -> {
             String[] txt = system("netsh wlan show interfaces", true);
 
             String ssid = "Not Connected";
@@ -62,21 +62,22 @@ public class InternetIcon extends TrayIcon {
 
     public void effect(JProgram p) {
         new Thread(() -> {
-            for (int i = Main.taskbar.getY(); i > (Main.taskbar.getY() - p.getHeight()); i--) {
+            boolean b = true;
+            for (int i = SystemBar.get.getY(); i > (SystemBar.get.getY() - p.getHeight()); i--) {
                 p.setLocation(((TaskBarTray.get().getX() - 15) - (getX() + getWidth())), i--);
                 try {
-                    Thread.sleep(1);
+                    if ((b = !b) && !Main.isLowMemory) Thread.sleep(1);
                 } catch (InterruptedException e1) { e1.printStackTrace(); }
                 p.validate();
             }
         }).start();
 
-        p.setLocation(Main.taskbar.getWidth(), Main.taskbar.getY() - p.getHeight());
+        p.setLocation(SystemBar.get.getWidth(), SystemBar.get.getY() - p.getHeight());
         p.validate();
     }
 
     public void refresh(JProgressBar pb, JLabel ssidl) {
-        Multithreading.run(() -> {
+        Utils.runAsync(() -> {
             String[] txt = system("netsh wlan show interfaces", true);
 
             String ssid = "Not Connected";

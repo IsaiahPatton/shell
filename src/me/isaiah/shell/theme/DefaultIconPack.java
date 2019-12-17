@@ -2,18 +2,18 @@ package me.isaiah.shell.theme;
 
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-
 public class DefaultIconPack extends IconPack {
 
     private static IconPack inst;
-    
+
     public DefaultIconPack() {
         try {
-            this.folder = new ImageIcon(get("folder.png", true));
-            this.blank = new ImageIcon(get("blankfile.png", true));
-            this.fxprogram = new ImageIcon(get("fxprogram.png", true));
-            this.user = get("user.png", false);
+            this.folder = getIcon("res/icons/folder.png", true);
+            this.blank = getIcon("res/icons/blankfile.png", true);
+            this.img = getIcon("res/icons/img.png", true);
+            this.text = getIcon("res/icons/text.png", true);
+            this.fxprogram = getIcon("fxprogram.png", true);
+            this.user = get("res/userpictures/tree.png", false);
             this.welcome = get("welcome.png", false);
         } catch (IOException e) { e.printStackTrace(); }
         inst = this;

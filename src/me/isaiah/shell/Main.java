@@ -1,10 +1,8 @@
 package me.isaiah.shell;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,47 +13,42 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
-import javax.swing.text.DefaultCaret;
 
-import me.isaiah.shell.api.JProgram;
+import jthemes.ThemeUtils;
+import jthemes.themes.ModernTheme;
 import me.isaiah.shell.api.JWebApp;
-import me.isaiah.shell.bartray.TaskBarTray;
+import me.isaiah.shell.programs.console.AdminConsole;
+import me.isaiah.shell.programs.FileExplorer;
+import me.isaiah.shell.programs.ImageViewer;
 import me.isaiah.shell.programs.NotePad;
 import me.isaiah.shell.programs.ProgramFileTypeOpener;
+import me.isaiah.shell.theme.DefaultIconPack;
+import me.isaiah.shell.theme.IconPack;
 
 public class Main {
 
-    public static final String NAME = "Z Desktop Envirement";
-    public static final String VERSION = "0.5-dev";
-    public static final String INFO = "Version " + VERSION + " on Java %s<br>"
-            + "Installed RAM:%s<p>Made possible by<br>- Calculator @ javacodex.com<br>- MineSweeper @ java2s.com</p>";
+    public static final String NAME = "Desktop Envirement";
+    public static final String VERSION = "0.6-Dev";
+
+    public static boolean isLowMemory;
+
+    public static final String INFO = NAME + " version " + VERSION + "<br><br>Running on Java %s<br>"
+            + "Heap size: %s<br>Low Memory Mode: " + isLowMemory;
 
     public static final Runtime r = Runtime.getRuntime();
-    public static final int ram = (int) r.maxMemory() / 1024 / 1024;
-    public static JPanel taskbar = new JPanel();
+    public static int ram = (int) (r.maxMemory() / 1024 / 1024);
     private static String mem;
 
     public static JFrame f = new JFrame();
     public static final ZDesktopPane p = new ZDesktopPane(f);
 
-    public static boolean dark = false;
-
-    public static JProgramManager pm;
+    //public static JProgramManager pm;
     protected static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
 
     public static ArrayList<String> pr = new ArrayList<String>() {
@@ -75,10 +68,15 @@ public class Main {
 
     @SuppressWarnings("unchecked")
     public static void init() {
-        DebugConsole.init();
+        //WebLookAndFeel.install ();
+        ThemeUtils.setCurrentTheme(new ModernTheme());
+        IconPack.setIconPack(new DefaultIconPack());
+        AdminConsole.init();
 
-        if (ram < 250)
+        if (ram < 256)
             System.err.println("JVM memory of " + ram + "mb is < than the required 256mb for web browsing");
+
+        isLowMemory = ram <= 96;
 
         double m = ram;
         if (m >= 1024) {
@@ -88,7 +86,7 @@ public class Main {
             else mem = m + " GB";
         } else mem = m + " MB";
 
-        p.setBackground(new Color(51, 153, 255));
+        p.setOpaque(false);
 
         if (pStorage.exists()) {
             try {
@@ -99,52 +97,60 @@ public class Main {
             } catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
         }
 
-        pm = new JProgramManager();
-        for (String s : pr) {
-            try {
-                pm.loadProgram(new File(s));
-            } catch (Exception e) { System.err.println("Program Manager Unable to load '" + s + "':" + e.getLocalizedMessage());}
-        }
+        // pm = new JProgramManager();
+        //for (String s : pr) {
+        //    try {
+        //        pm.loadProgram(new File(s));
+        //    } catch (Exception e) { System.err.println("Program Manager Unable to load '" + s + "':" + e.getLocalizedMessage());}
+        //}
 
         p.setVisible(true);
 
-        JPanel base = new JPanel();
-        JButton menu = new JButton("Menu");
-        menu.setBackground(Color.GREEN);
-        menu.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GREEN.darker(), 2), menu.getBorder()));
-        menu.addMouseListener(MouseClick.click(e -> StartMenu.start()));
+        JPanel base = new JPanel() {
 
-        taskbar.setMaximumSize(new Dimension(10000, 50));
-        taskbar.setLayout(new BorderLayout());
-        taskbar.add(menu, BorderLayout.WEST);
-        taskbar.add(p.open);
-        taskbar.add(new TaskBarTray(), BorderLayout.EAST);
-        taskbar.setBackground(new Color(31, 70, 250));
+            private static final long serialVersionUID = 1L;
 
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (!isLowMemory && null != p.img)
+                    g.drawImage(p.img, 0, 0, null);
+
+                if (isLowMemory)
+                    g.drawString("LOW MEMORY MODE [" + mem + "]", (getWidth() / 2) - 70, getHeight() / 2);
+
+                g.setColor(Color.GRAY);
+                g.drawString("Version " + Main.VERSION, getWidth() - (102 + (Main.VERSION.length() * 3)), 18);
+                g.drawString("Java Verison: " + System.getProperty("java.version"), getWidth() - 151, 33);
+                g.drawString("JVM Memory: " + mem, getWidth() - 151, 47);
+            }
+        };
+        base.setBackground(new Color(60, 123, 250));
         base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS));
         base.add(p);
-        base.add(taskbar);
-        taskbar.setPreferredSize(new Dimension(taskbar.getPreferredSize().width, taskbar.getPreferredSize().height + 10));
 
         f.setUndecorated(true);
         f.setContentPane(base);
+        f.setMinimumSize(new Dimension(800, 600));
         f.pack();
 
         f.setVisible(true);
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        pm = new JProgramManager();
+        // pm = new JProgramManager();
         Desktop.init();
         setDefaultBackground(base);
 
-        new UpdateCheck();
-
+        // new UpdateCheck();
+        base.validate();
+        base.repaint();
         f.validate();
+        p.add(new SystemBar());
     }
 
     public static void setDefaultBackground(JPanel base) {
         try {
-            p.setBackground(ImageIO.read(Main.class.getClassLoader().getResource("bg.jpg")));
+            p.setBackground(ImageIO.read(Main.class.getClassLoader().getResource("res/background/material-design-1920x1200-stock-yellow-shapes-material-hd-14202.jpg")));
         } catch (IOException e1) { e1.printStackTrace(); }
     }
 
@@ -162,23 +168,6 @@ public class Main {
         } catch (IOException e) { return "internet"; }
     }
 
-    public static void showNotification(String tex, int ms) {
-        showNotification(tex, ms, 420, 110);
-    }
-
-    public static void showNotification(String tex, int ms, int width, int height) {
-        showNotification(tex, new Font("Arial", Font.PLAIN, 13), ms, width, height);
-    }
-
-    public static void showNotification(String tex, Font fo, int ms, int width, int height) {
-        Notification n = new Notification(tex, ms);
-        n.setSize(width,height);
-        n.getContent().setFont(fo);
-        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Notification.shown - 1) * (3 + height)));
-        n.validate();
-        p.add(n, width, height);
-    }
-
     public static void newFileExplorer(File file) {
         if (file.isDirectory()) {
             FileExplorer e = new FileExplorer(file);
@@ -188,91 +177,22 @@ public class Main {
             if (name.endsWith(".exe"))
                 JOptionPane.showInternalMessageDialog(p, "Unsupported File type", "Explorer", 0);
             else if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) 
-                newImageView(file);
+                new ImageViewer(file);
 
             else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
                 p.add( new NotePad(file) );
-            else if (name.endsWith(".jar")) pm.loadProgram(file, true);
+            //else if (name.endsWith(".jar")) pm.loadProgram(file, true);
 
-            else
-                p.add(new ProgramFileTypeOpener(file));
+            else p.add(new ProgramFileTypeOpener(file));
         }
     }
 
-    public static void newImageView(File img) {
-        JLabel l = new JLabel();
-        try {
-            l.setIcon(new ImageIcon(ImageIO.read(img)));
-        } catch (IOException e) {
-            l.setText("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-        JProgram i = new JProgram("Image Viewer");
-        i.setContentPane(new JScrollPane(l));
-        i.pack();
-        p.add(i);
-    }
-
-    protected static final void taskManager() {
-        JProgram inf = new JProgram("Task Manager");
-        JPanel pan = new JPanel();
-        JTextArea a = new JTextArea();
-        try {
-            a.setText(getTasks());
-        } catch (IOException | InterruptedException e1) { e1.printStackTrace(); }
-
-        pan.add(new JScrollPane(a));
-        a.setMargin(new Insets(0, 5, 5, 5));
-        ((DefaultCaret)a.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-
-        new Timer(4000, l -> {
-            try { a.setText(getTasks()); } catch (IOException | InterruptedException e) { e.printStackTrace(); }
-        }).start(); 
-
-        a.setEditable(false);
-        pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
-        inf.setContentPane(pan);
-        p.add(inf, 550, 350);
-    }
-
-    private static final String getTasks() throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder("tasklist").redirectErrorStream(true);
-        Process process = processBuilder.start();
-        String s = "";
-        try (BufferedReader proOut = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
-            String line;
-            while ((line = proOut.readLine()) != null) {
-                List<String> list = Arrays.asList(line.split(" "));
-                String ss = list.toString().substring(1).replaceAll(" ,", "");
-                String[] ssa = ss.split(" ");
-                ssa[ssa.length - 1] = ""; // Remove K
-
-                if (ssa.length > 1) {
-                    try {
-                        int kb = Integer.valueOf(ssa[ssa.length - 2].replaceAll(",", ""));
-                        ssa[ssa.length - 2] = kb > 1024 ? (kb / 1024) + "MB" : kb + "KB";
-                    } catch (NumberFormatException e) {}
-                }
-
-                for (String str : ssa) {
-                    while (str.length() < 30) str += " ";
-
-                    s += "\t" + str.replace(",", "");
-                }
-                s += "\n";
-            }
-
-            process.waitFor();
-        }
-        process.destroy();
-        return s;
-    }
-
-    protected static final void about() {
+    public static final void about() {
         JWebApp w = new JWebApp("<title>About</title><div style='background-color:#e6e6e6;padding-bottom:8px;padding-right:14px;"
                 + "padding-left:14px;'><h1>" + NAME + "</h1><hr>" + String.format(INFO, 
                         System.getProperty("java.version"), mem) + "</div>");
         w.setResizable(false);
+        w.setMaximizable(false);
         w.setVisible(true);
         p.add(w);
     }

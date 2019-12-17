@@ -1,52 +1,41 @@
 package me.isaiah.shell;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Image;
-import java.beans.PropertyVetoException;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import me.isaiah.shell.api.JProgram;
+import me.isaiah.shell.api.Notification;
 
 public class ZDesktopPane extends JDesktopPane {
 
     private static final long serialVersionUID = 1L;
-    private Image img = null;
+    public Image img;
     private JFrame f;
-    public final JPanel open = new JPanel();
-
-    public List<JInternalFrame> list = new ArrayList<>();
 
     public ZDesktopPane(JFrame parent) {
         super();
         this.f = parent;
-        this.addMouseListener(MouseClick.click(e -> StartMenu.stop()));
-        open.setOpaque(false);
+        this.addMouseListener(Utils.click(e -> StartMenu.stop()));
+        this.addContainerListener(new DesktopContainerListener());
     }
 
     public void setLAF(String className) {
-        Multithreading.run(() -> {
+        Utils.runAsync(() -> {
             try {
                 UIManager.setLookAndFeel(className);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                    | UnsupportedLookAndFeelException e1) {
-                e1.printStackTrace();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                e.printStackTrace();
             }
             SwingUtilities.updateComponentTreeUI(Main.f);
             Main.p.removeAll();
@@ -57,19 +46,14 @@ public class ZDesktopPane extends JDesktopPane {
     }
 
     public void setBackground(Image img) {
+        if (this.img == null) {
+            f.addComponentListener(new ComponentAdapter() {  
+                public void componentResized(ComponentEvent evt) {
+                    setBackground(img);
+                }
+            });
+        }
         this.img = img.getScaledInstance(f.getWidth(), f.getHeight(), 0);
-
-        // "Refresh" Screen
-        JInternalFrame b = new JInternalFrame();
-        b.setName("DESKTOP_ICON");
-        b.setLocation(0, 0);
-        b.putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);
-        b.setVisible(true);
-        b.setSize(getWidth(), getHeight());
-        b.validate();
-        add(b);
-        moveToBack(b);
-        remove(b);
     }
 
     public void add(JProgram j, int width, int height) {
@@ -80,70 +64,38 @@ public class ZDesktopPane extends JDesktopPane {
 
     @Override
     public void addImpl(Component j, Object constraints, int index) {
+
         StartMenu.stop();
 
         j.setVisible(true);
         super.addImpl(j, constraints, index);
         moveToFront(j);
-
-        if ((j instanceof JInternalFrame || j instanceof JProgram) &&
-                !(j instanceof StartMenu || j instanceof Notification)) {
-
-            JInternalFrame jp = (JInternalFrame) j;
-            if ((jp.getName() == null || !jp.getName().equalsIgnoreCase("DESKTOP_ICON"))
-                    && !jp.isIcon() && !list.contains(jp)) {
-
-                ImageIcon i = new ImageIcon();
-                if (jp.getFrameIcon() != null)
-                    i.setImage( ((ImageIcon) jp.getFrameIcon()).getImage().getScaledInstance(24, 24, 0) );
-
-                JButton l = new JButton(i);
-                l.setBackground(Color.GRAY);
-                l.setOpaque(true);
-                l.setBorder(BorderFactory.createEmptyBorder(7, 5, 7, 5));
-                l.setText(jp.getTitle());
-
-                open.add(l);
-                jp.addInternalFrameListener(new InternalFrameAdapter(){
-                    public void internalFrameClosing(InternalFrameEvent e) { 
-                        l.setIcon(null);
-                        l.setText(null);
-                        l.setVisible(false);
-                        Timer ti = new Timer(10, a -> open.remove(l));
-                        ti.setRepeats(false);
-                        ti.start();
-                    }
-                    public void internalFrameIconified(InternalFrameEvent e) { 
-                        jp.getDesktopIcon().setVisible(false);
-                        jp.setVisible(false);
-                        list.add(jp);
-                    }
-                    public void internalFrameDeiconified(InternalFrameEvent e) {
-                        list.remove(jp);
-                        Timer ti = new Timer(1000, a -> open.validate());
-                        ti.setRepeats(false);
-                        ti.start();
-                    }
-                });
-                l.addMouseListener(MouseClick.click(e -> {
-                    try {
-                        jp.setIcon(false);
-                    } catch (PropertyVetoException e1) { e1.printStackTrace(); }
-                    jp.setVisible(true);
-                    jp.toFront();
-                }));
-            }
-        }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (null != img)
-            g.drawImage(img, 0, 0, null);
+    private class DesktopContainerListener implements ContainerListener {
+        
+        private boolean d = false;
+        int i = 0;
 
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawString("ZDE v" + Main.VERSION, getWidth() - 100, 20);
+        public void componentAdded(ContainerEvent event) {
+            if (d) return;
+
+            JInternalFrame j = (JInternalFrame) event.getChild();
+            if (null == j.getClientProperty("dontDisplayInWindowBar")) {
+                JInternalFrame jp = (JInternalFrame) j;
+                if ((jp.getName() == null || !jp.getName().equalsIgnoreCase("DESKTOP_ICON")) && !jp.isIcon())
+                    SystemBar.get.wb.addFrame(j);
+            }
+        }
+
+        public void componentRemoved(ContainerEvent event) {
+            i++;
+            if (i < 3) return;
+
+            JInternalFrame j = (JInternalFrame) event.getChild();
+            if (!(j instanceof StartMenu || j instanceof Notification || j instanceof SystemBar))
+                SystemBar.get.wb.removeFrame(j);
+        }
     }
 
 }

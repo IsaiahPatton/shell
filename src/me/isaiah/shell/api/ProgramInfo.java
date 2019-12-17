@@ -13,7 +13,7 @@ public @interface ProgramInfo {
     public String authors() default "Unknown";
     public String minShellVersion() default "_all_";
 
-    public int width() default 300;
-    public int height() default 200;
+    public int width() default 600;
+    public int height() default 300;
 
 }

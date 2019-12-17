@@ -22,7 +22,7 @@ public class JWebApp extends JProgram {
 
     public void setHtml(String t) {
         if (t.contains("<title>"))
-            setTitle( t.substring(t.indexOf("<title>") + 7, t.indexOf("</title>") ));
+            setTitle( t.substring(t.indexOf("<title>") + 7, t.indexOf("</title>")) );
 
         e.setText(t);
     }

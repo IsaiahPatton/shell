@@ -24,19 +24,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import me.isaiah.shell.Main;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
 /**
- * Edited by Isaiah.
- * 
  * @author Aniruddha Dutta Chowdhury
  * @googleProfile http://www.google.com/profiles/a.d.chowdhury
  * @blog http://adchowdhury.blogspot.com/
 */
-@ProgramInfo(name = "Minesweeper", version="1.0", authors="Aniruddha Dutta Chowdhury.")
-public class MineSweeper extends JProgram implements AWTEventListener, ActionListener {
+@ProgramInfo(name = "Minesweeper", version="1.0", authors="Aniruddha Dutta Chowdhury", width=300,height=400)
+public class Minesweeper extends JProgram implements AWTEventListener, ActionListener {
     private static final long serialVersionUID = 1L;
 
     public static enum State { Clicked, Marked, Initial, WrongMarked }
@@ -63,9 +60,11 @@ public class MineSweeper extends JProgram implements AWTEventListener, ActionLis
         th.start();
     }
 
-    public MineSweeper() {
-        setLayout(new BorderLayout());
-        add(pnlMain, BorderLayout.CENTER);
+    public Minesweeper() {
+        JPanel cp = new JPanel();
+        cp.setLayout(new BorderLayout());
+        setContentPane(cp);
+        cp.add(pnlMain, BorderLayout.CENTER);
         createButtons();
         addControlPanel();
         Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
@@ -95,7 +94,7 @@ public class MineSweeper extends JProgram implements AWTEventListener, ActionLis
         pnlN.add(lblBombCount);
         pnlN.add(pnl);
         pnlN.add(pnlTimer);
-        add(pnlN, BorderLayout.NORTH);
+        getContentPane().add(pnlN, BorderLayout.NORTH);
         btnReset.addActionListener(this);
     }
 
@@ -322,8 +321,8 @@ public class MineSweeper extends JProgram implements AWTEventListener, ActionLis
 
   public void eventDispatched(AWTEvent event) {
     if (KeyEvent.class.isInstance(event) && ((KeyEvent) (event)).getID() == KeyEvent.KEY_RELEASED) {
-      if (((KeyEvent) (event)).getKeyCode() == KeyEvent.VK_F1 && isSelected())
-          Main.showNotification("Minesweeper by:\n Aniruddha Dutta Chowdhury\njShell ports by jShell", 5000, 220, 70);
+     // if (((KeyEvent) (event)).getKeyCode() == KeyEvent.VK_F1 && isSelected())
+      // TODO    Main.showNotification("Minesweeper by:\n Aniruddha Dutta Chowdhury\njShell ports by jShell", 5000, 220, 70);
       if (((KeyEvent) (event)).getKeyCode() == KeyEvent.VK_F2 && isSelected()) restartGame();
       if (((KeyEvent) (event)).getKeyCode() == KeyEvent.VK_F3 && isSelected()) {
         isColorCheatOn = !isColorCheatOn;
