@@ -176,8 +176,17 @@ public class StartMenu extends JProgram {
             let.setBorder(BorderFactory.createTitledBorder(new EmptyBorder(4,2,16,2), s.toUpperCase()));
             ((TitledBorder)let.getBorder()).setTitleColor(Color.WHITE);
             for (Class<? extends JProgram> str : nameMap.get(s)) {
-                JLabel l = (JLabel)let.add(new JLabel(str.getAnnotation(ProgramInfo.class).name()));
-                l.setIcon(IconPack.scale(IconPack.get().blank, 20, 20));
+                String name = str.getAnnotation(ProgramInfo.class).name();
+                JLabel l = (JLabel)let.add(new JLabel(name));
+                try {
+                    ImageIcon icon = IconPack.getIcon("res/icons/menu/" + name.replace(" ", "-") + ".png", false);
+                    if (icon == null)
+                        icon = IconPack.get().blank;
+                    l.setIcon(IconPack.scale(icon, 20, 20));
+                } catch (IOException e2) {
+                    l.setIcon(IconPack.scale(IconPack.get().blank, 20, 20));
+                    e2.printStackTrace();
+                }
                 l.setForeground(new Color(225,225,225));
                 l.setBorder(new EmptyBorder(4,0,4,0));
                 l.addMouseListener(Utils.click(m -> {

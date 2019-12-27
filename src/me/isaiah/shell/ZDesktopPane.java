@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import me.isaiah.shell.api.JProgram;
-import me.isaiah.shell.api.Notification;
+import me.isaiah.shell.api.Toast;
 
 public class ZDesktopPane extends JDesktopPane {
 
@@ -93,7 +93,7 @@ public class ZDesktopPane extends JDesktopPane {
             if (i < 3) return;
 
             JInternalFrame j = (JInternalFrame) event.getChild();
-            if (!(j instanceof StartMenu || j instanceof Notification || j instanceof SystemBar))
+            if (!(j instanceof StartMenu || j instanceof Toast || j instanceof SystemBar))
                 SystemBar.get.wb.removeFrame(j);
         }
     }

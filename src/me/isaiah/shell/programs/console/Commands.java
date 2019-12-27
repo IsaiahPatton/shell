@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -14,8 +15,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import me.isaiah.shell.Main;
-import me.isaiah.shell.api.Notification;
-import me.isaiah.shell.programs.console.Console;
+import me.isaiah.shell.api.Toast;
 
 public class Commands {
 
@@ -75,7 +75,7 @@ public class Commands {
                     add(t.getName() + " | " + t.getState() + " | " + t.getId());
                 break;
             case "note":
-                Notification.show("Test", 4500);
+                Toast.show("Test", 4500);
                 break;
             case "help":
                 add("===== Help =====", Color.CYAN);

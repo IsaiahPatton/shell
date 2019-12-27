@@ -17,7 +17,7 @@ import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
 @ProgramInfo(name="Notification")
-public class Notification extends JProgram {
+public class Toast extends JProgram {
 
     private static final long serialVersionUID = 1L;
     private JTextArea cont;
@@ -29,16 +29,16 @@ public class Notification extends JProgram {
 
     public static void show(String tex, int ms, int width, int height, Font fo) {
         JFrame f = Main.f;
-        Notification n = new Notification(tex, ms);
+        Toast n = new Toast(tex, ms);
         n.setSize(width,height);
         if (null != fo)
             n.getContent().setFont(fo);
-        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Notification.shown - 1) * (3 + height)));
+        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Toast.shown - 1) * (3 + height)));
         n.validate();
         Main.p.add(n, width, height);
     }
 
-    public Notification(String content, int ms) {
+    public Toast(String content, int ms) {
         super("Notification", false, true, false);
         this.setVisible(true);
         this.cont = new JTextArea(content);

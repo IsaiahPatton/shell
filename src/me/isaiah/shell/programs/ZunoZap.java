@@ -31,8 +31,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+
 import me.isaiah.shell.Main;
-import me.isaiah.shell.api.Notification;
+import me.isaiah.shell.api.Toast;
 import me.isaiah.shell.api.JFXProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
@@ -50,7 +51,7 @@ public class ZunoZap extends ZunoAPI {
             try {
                 ZunoZap.main(null);
             }  catch (Exception e) { 
-                Notification.show(e.getMessage(), 5000);
+                Toast.show(e.getMessage(), 5000);
                 e.printStackTrace(); 
             }
         });

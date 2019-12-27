@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import jthemes.ThemeUtils;
 import jthemes.themes.ModernTheme;
 import me.isaiah.shell.api.JWebApp;
+import me.isaiah.shell.api.loader.JProgramManager;
 import me.isaiah.shell.programs.console.AdminConsole;
 import me.isaiah.shell.programs.FileExplorer;
 import me.isaiah.shell.programs.ImageViewer;
@@ -48,8 +49,8 @@ public class Main {
     public static JFrame f = new JFrame();
     public static final ZDesktopPane p = new ZDesktopPane(f);
 
-    //public static JProgramManager pm;
-    protected static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
+    public static JProgramManager pm;
+    public static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
 
     public static ArrayList<String> pr = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
@@ -97,7 +98,7 @@ public class Main {
             } catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
         }
 
-        // pm = new JProgramManager();
+        pm = new JProgramManager();
         //for (String s : pr) {
         //    try {
         //        pm.loadProgram(new File(s));

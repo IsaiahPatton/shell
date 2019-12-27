@@ -17,7 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import me.isaiah.shell.Main;
-import me.isaiah.shell.api.Notification;
+import me.isaiah.shell.api.Toast;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.JWebApp;
 import me.isaiah.shell.api.ProgramInfo;
@@ -67,7 +67,7 @@ public class NotePad extends JProgram {
                     writer.write(line);
                     writer.newLine();
                 }
-            } catch (IOException e) { Notification.show(e.getMessage(), 3500); e.printStackTrace(); }
+            } catch (IOException e) { Toast.show(e.getMessage(), 3500); e.printStackTrace(); }
         });
 
         mf.add("Open as JWebApp").addActionListener(l -> {
