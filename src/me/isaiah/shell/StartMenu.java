@@ -10,6 +10,7 @@ import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
@@ -37,6 +38,8 @@ import me.isaiah.shell.api.ProgramInfo;
 import me.isaiah.shell.programs.*;
 import me.isaiah.shell.programs.console.AdminConsole;
 import me.isaiah.shell.programs.console.Console;
+import me.isaiah.shell.programs.console.TabbedConsole;
+import me.isaiah.shell.programs.console.Test;
 import me.isaiah.shell.theme.DefaultIconPack;
 import me.isaiah.shell.theme.IconPack;
 import me.isaiah.shell.ui.ModernScrollPane;
@@ -67,7 +70,9 @@ public class StartMenu extends JProgram {
     protected static StartMenu i;
     public static boolean isOpen = false;
     private final File root = new File(System.getProperty("user.home") + File.separator + "desktop");
-    private final JPanel p, tiles;
+    private final JPanel p, tiles, t;
+    private final JMenuBar ba;
+    private List<JPanel> lets;
 
     public static void start() {
         if (isOpen) {
@@ -113,28 +118,54 @@ public class StartMenu extends JProgram {
         validate();
     }
 
+    public static Color background = Color.BLACK;
+    public static Color pBackground = new Color(15, 15, 15, 250);
+    public static Color tilesBackground = new Color(0, 0, 0, 200);
+    public static Color letBackground = new Color(25, 25, 25, 250);
+    public static Color borderBackground = new Color(20, 20, 20);
+
+    public static void setColors(Color bg, Color pBg, Color tiles, Color lets, Color border) {
+        background = bg;
+        pBackground = pBg;
+        tilesBackground = tiles;
+        borderBackground = border;
+        if (null != i)
+            i.refreshColors();
+    }
+
+    public void refreshColors() {
+        p.setBackground(Main.isLowMemory ? new Color(15, 15, 15) : pBackground);
+        t.setBackground(borderBackground);
+        setBackground(background);
+        tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : tilesBackground);
+        ba.setBackground(borderBackground);
+        for (JPanel let : lets)
+            let.setBackground(letBackground);
+    }
+
     public StartMenu() {
         super("Menu", false, false, false);
         this.setUndecorated(true);
         StartMenu.i = this;
 
+        lets = new ArrayList<>();
         p = new JPanel();
-        p.setBackground(Main.isLowMemory ? new Color(15, 15, 15) : new Color(15, 15, 15, 250));
+        p.setBackground(Main.isLowMemory ? new Color(15, 15, 15) : pBackground);
         p.setLayout(new BorderLayout());
-        JPanel t = new JPanel();
-        t.setBackground(new Color(20,20,20));
+        t = new JPanel();
+        t.setBackground(borderBackground);
         t.setBorder(BorderFactory.createEmptyBorder(25,0,0,0));
         p.add(t, BorderLayout.NORTH);
 
-        setBackground(Color.BLACK);
+        setBackground(background);
 
-        JMenuBar ba = new JMenuBar();
+        ba = new JMenuBar();
 
         addProgram(CopperBrowser.class);
         addProgram(FileExplorer.class);
         addProgram(AdminConsole.class);
         addProgram(PersonalizationSettings.class);
-        addProgram(Console.class);
+        addProgram(TabbedConsole.class);
         addProgram(WebBrowser.class);
         addProgram(NotePad.class);
         addProgram(Calc.class);
@@ -144,7 +175,7 @@ public class StartMenu extends JProgram {
         this.setOpaque(false);
         tiles = new JPanel();
         tiles.setMinimumSize(new Dimension(100,450));
-        tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : new Color(0, 0, 0, 200));
+        tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : tilesBackground);
         tiles.setOpaque(false);
 
         ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calc(), 200, 200));
@@ -172,7 +203,7 @@ public class StartMenu extends JProgram {
         sort.setOpaque(false);
         for (String s : nameMap.keySet()) {
             JPanel let = new JPanel();
-            let.setBackground(new Color(25, 25, 25, 250));
+            let.setBackground(letBackground);
             let.setLayout(new GridLayout(0, 1));
             let.setBorder(BorderFactory.createTitledBorder(new EmptyBorder(4,2,16,2), s.toUpperCase()));
             ((TitledBorder)let.getBorder()).setTitleColor(Color.WHITE);
@@ -199,6 +230,7 @@ public class StartMenu extends JProgram {
                     }
                 }));
             }
+            lets.add(let);
             sort.add(let);
         }
         JScrollPane sp = new ModernScrollPane(sort, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -212,7 +244,7 @@ public class StartMenu extends JProgram {
         tiles.setMaximumSize(new Dimension(512, 900));
         p.add(b, BorderLayout.CENTER);
         p.add(ba, BorderLayout.SOUTH);
-        ba.setBackground(new Color(20,20,20));
+        ba.setBackground(borderBackground);
         setContentPane(p);
 
         addInternalFrameListener(new InternalFrameAdapter(){public void internalFrameClosing(InternalFrameEvent e) {stop();}});
@@ -223,6 +255,7 @@ public class StartMenu extends JProgram {
         pack();
         this.setPreferredSize(new Dimension(589, 600));
         this.setBorder(null);
+        sp.repaint();
     }
 
     class Tile extends JComponent {

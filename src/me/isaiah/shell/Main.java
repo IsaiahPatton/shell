@@ -15,7 +15,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import me.isaiah.shell.api.JWebApp;
 import me.isaiah.shell.api.loader.JProgramManager;
 import me.isaiah.shell.programs.console.AdminConsole;
@@ -56,10 +55,7 @@ public class Main {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-        Theme.setCurrentTheme(new DefaultTheme());
-        AdminConsole.init();
-
-        isLowMemory = ram <= 120;
+        isLowMemory = ram <= 128;
 
         double m = ram;
         if (m >= 1024) {
@@ -118,6 +114,8 @@ public class Main {
         Desktop.init();
         setDefaultBackground(base);
 
+        Theme.setCurrentTheme(new DefaultTheme());
+        AdminConsole.init();
         f.validate();
     }
 

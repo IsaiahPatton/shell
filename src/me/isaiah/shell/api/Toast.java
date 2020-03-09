@@ -41,6 +41,7 @@ public class Toast extends JProgram {
 
     public Toast(String content, int ms) {
         super("Notification", false, true, false);
+        this.setUndecorated(true);
         this.setVisible(true);
         this.cont = new JTextArea(content);
         this.cont.setMargin(new Insets(12, 12, 12, 12));

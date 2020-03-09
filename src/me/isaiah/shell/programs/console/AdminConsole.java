@@ -18,15 +18,18 @@ import me.isaiah.shell.api.ProgramInfo;
 public class AdminConsole extends Console {
 
     private static final long serialVersionUID = 1L;
+    private static AdminConsole i;
 
     public AdminConsole() {
-        super(false);
+        super(true);
     }
 
     public static void init() {
+        i = new AdminConsole();
+
         PrintStream m = System.out;
-        area = new JTextPane();
-        StyledDocument d = area.getStyledDocument();
+        i.area = new JTextPane();
+        StyledDocument d = i.area.getStyledDocument();
 
         System.setOut(new PrintStream(new OutputStream() {
             @Override public void write(int b) throws IOException {

@@ -1,7 +1,6 @@
 package me.isaiah.shell.programs.console;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -9,11 +8,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -30,8 +28,11 @@ import me.isaiah.shell.api.Toast;
 public class Console extends JProgram {
 
     private static final long serialVersionUID = 1L;
-    protected static JTextPane area;
+    protected JTextPane area;
     private File currentPath;
+
+    private List<String> commandHistory;
+    private int history;
 
     public Console() {
         this(true);
@@ -40,9 +41,11 @@ public class Console extends JProgram {
     public Console(boolean reset) {
         if (reset) {
             area = new JTextPane();
-            area.setText(Main.NAME + " [Version " + Main.VERSION + "]\n(C) 2018-2020 Fungus Software & contributors\n\n");
+            area.setText(Main.NAME + " [Version " + Main.VERSION + "]\n(C) 2018-2020 Fungus Software & contributors\n");
         }
-        currentPath = new File(System.getProperty("user.home"));
+        this.commandHistory = new ArrayList<>();
+        this.currentPath = new File(System.getProperty("user.home"));
+
         area.setBackground(Color.BLACK);
         area.setForeground(Color.LIGHT_GRAY);
         area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -54,7 +57,6 @@ public class Console extends JProgram {
             public void keyPressed(KeyEvent ev) {
                 boolean isEnter = ev.getKeyCode() == KeyEvent.VK_ENTER;
 
-                //area.setCaretPosition(area.getText().length());
                 String[] txt = area.getText().split("\n");
                 String last = txt[txt.length - 1];
                 int caretInLast = area.getCaretPosition()-(area.getText().length() - last.length());
@@ -67,10 +69,19 @@ public class Console extends JProgram {
                 } else if (ev.getKeyCode() == KeyEvent.VK_LEFT && caretInLast == last.indexOf(">")+1)
                         ev.consume();
 
-                if (ev.getKeyCode() == KeyEvent.VK_UP)
-                    ev.consume(); // TODO: add history
+                boolean isDown = ev.getKeyCode() == KeyEvent.VK_DOWN;
+                if (ev.getKeyCode() == KeyEvent.VK_UP || isDown) {
+                    ev.consume();
+                    int point = commandHistory.size() - 1 - history;
+                    if (commandHistory.size() > 0 && point >= 0) {
+                        setLine(commandHistory.get(point));
+                        if (isDown) history--;
+                        else history++;
+                    }
+                }
 
                 if (isEnter) {
+                    history = 0;
                     onCommand(last.substring(last.indexOf(">") + 1));
                     ev.consume();
                 }
@@ -88,18 +99,11 @@ public class Console extends JProgram {
             }
         });
 
-        JScrollPane p = new JScrollPane(area);
-        JTextField f = new JTextField();
-        f.setMaximumSize(new Dimension(100000, 100));
-        f.addActionListener(l -> { onCommand(f.getText()); f.setText("");});
-        JPanel pan = new JPanel();
-        pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
-        pan.add(p);
-        //pan.add(f);
-        setContentPane(pan);
+        setContentPane(new JScrollPane(area));
     }
 
-    public final void onCommand(String command) {
+    public void onCommand(String command) {
+        this.commandHistory.add(command);
         String[] args = command.split(" ");
 
         switch (args[0]) {
@@ -126,7 +130,7 @@ public class Console extends JProgram {
                 break;
             case "cls":
             case "clear":
-                area.setText(Main.NAME + " [Version " + Main.VERSION + "]\n(C) 2020 Fungus Software & contributors\n");
+                area.setText(Main.NAME + " [Version " + Main.VERSION + "]\n\u00A92020 Fungus Software & contributors\n");
                 break;
             case "title":
                 if (args.length == 1) add("Window title: " + getTitle());
@@ -142,7 +146,7 @@ public class Console extends JProgram {
                     add(t.getName() + " | " + t.getState() + " | " + t.getId());
                 break;
             case "note":
-                Toast.show("Test", 4500);
+                Toast.show(command, 4500);
                 break;
             case "help":
                 add("===== Help =====", Color.CYAN);
@@ -158,7 +162,7 @@ public class Console extends JProgram {
                 add("THREADS    Show simple info about all Threads");
                 break;
             default:
-                add("Unknown command: " + args[0], Color.red);
+                add("Unknown command: " + args[0], Color.RED);
                 break;
         }
     }
@@ -168,12 +172,34 @@ public class Console extends JProgram {
     }
 
     private void add(String content, Color c) {
+        append("\n" + content, c);
+    }
+    
+    private void append(String content, Color c) {
         StyledDocument d = area.getStyledDocument();
         Style style = d.getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setForeground(style, c);
         try {
-            d.insertString(d.getLength(), "\n" + content, style);
+            d.insertString(d.getLength(), content, style);
         } catch (BadLocationException e) { e.printStackTrace(); }
+    }
+
+    private void setLine(String content) {
+        String[] txt = area.getText().split("\n");
+        String last = txt[txt.length - 1];
+        String lastA = last.substring(0, last.indexOf(">"));
+
+        StyledDocument d = area.getStyledDocument();
+        Style style = d.getStyle(StyleContext.DEFAULT_STYLE);
+        StyleConstants.setForeground(style, Color.LIGHT_GRAY);
+
+        try {
+            int start = d.getLength() - (last.length() - lastA.length()) + 1;
+            d.remove(start, d.getLength() - start);
+            d.insertString(start, content, style);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 
     private void system(String[] args, boolean block) {

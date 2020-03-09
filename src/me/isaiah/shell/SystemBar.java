@@ -26,6 +26,7 @@ public class SystemBar extends JProgram {
 
     public static Color barColor;
     public static Color btnBg;
+    public static Dimension size;
 
     public SystemBar() {
         SystemBar.get = this;
@@ -50,7 +51,7 @@ public class SystemBar extends JProgram {
         p.add(new TaskBarTray(), BorderLayout.EAST);
         p.setBackground(barColor);
 
-        setSize(new Dimension(Main.p.getWidth(), getPreferredSize().height + 10));
+        setSize(size != null ? size : (size = new Dimension(Main.p.getWidth(), getPreferredSize().height + 10)));
         this.setBorder(null);
         this.setVisible(true);
         this.setLocation(0, Main.p.getHeight() - this.getHeight());
@@ -70,6 +71,15 @@ public class SystemBar extends JProgram {
     @Override
     public boolean isSelected() {
         return false;
+    }
+
+    public static void setSized(Dimension d) {
+        size = d;
+        if (get != null) {
+            get.setSize(d);
+            get.setLocation(0, Main.p.getHeight() - get.getHeight());
+            get.validate();
+        }
     }
 
     public static void setButtonBackground(Color c) {
