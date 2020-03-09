@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileSystemView;
 
+import me.isaiah.shell.programs.FileExplorer;
 import me.isaiah.shell.theme.DefaultIconPack;
 import me.isaiah.shell.theme.IconPack;
 import me.isaiah.shell.ui.OutlineLabel;
@@ -46,7 +47,7 @@ public class Icon extends OutlineLabel {
         this.setHorizontalTextPosition(SwingConstants.CENTER);
         this.setHorizontalAlignment(SwingConstants.CENTER);
 
-        if (lis) this.addActionListener(l -> Main.newFileExplorer(f));
+        if (lis) this.addActionListener(l -> FileExplorer.newExplorer(f));
     }
 
     public void setIcon(String name, boolean folder) throws IOException {

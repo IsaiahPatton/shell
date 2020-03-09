@@ -14,7 +14,7 @@ import javax.swing.text.StyledDocument;
 import me.isaiah.shell.Main;
 import me.isaiah.shell.api.ProgramInfo;
 
-@ProgramInfo(name = "AdminCMD")
+@ProgramInfo(name = "Command Prompt - Admin")
 public class AdminConsole extends Console {
 
     private static final long serialVersionUID = 1L;
@@ -51,8 +51,8 @@ public class AdminConsole extends Console {
                 }
             }}));
 
-        System.out.println("[Version " + Main.VERSION + "]");
-        System.out.println("(C) 2018-2019 Contributors");
+        System.out.println(Main.NAME + " [Version " + Main.VERSION + "]");
+        System.out.println("(C) 2018-2020 Fungus Software & contributors");
     }
 
 }

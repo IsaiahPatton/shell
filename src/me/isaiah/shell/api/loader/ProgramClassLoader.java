@@ -1,6 +1,5 @@
 package me.isaiah.shell.api.loader;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -19,6 +18,7 @@ final class ProgramClassLoader extends URLClassLoader {
     private final ProgramLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
     public JProgram plugin;
+    public Class<?> jarClass;
 
     @SuppressWarnings("unchecked")
     ProgramClassLoader(final ProgramLoader loader, final ClassLoader parent, final String name, final URI file) throws Exception {
@@ -36,8 +36,7 @@ final class ProgramClassLoader extends URLClassLoader {
                 pluginClass = jarClass.asSubclass(JProgram.class);
             } catch (ClassCastException e) {
                 try {
-                    // Try super  class
-                    pluginClass = (Class<? extends JProgram>) jarClass.asSubclass(JInternalFrame.class);
+                    pluginClass = (Class<? extends JProgram>) jarClass.asSubclass(JInternalFrame.class); // Try super class
                 } catch (ClassCastException e1) {
                     try {
                         JFrame f = (JFrame) jarClass.newInstance();
@@ -58,6 +57,20 @@ final class ProgramClassLoader extends URLClassLoader {
             }
 
             plugin = pluginClass.newInstance();
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    ProgramClassLoader(final ProgramLoader loader, final ClassLoader parent, final String name, final URI file, boolean a) throws Exception {
+        super(new URL[] {file.toURL()}, parent);
+
+        this.loader = loader;
+        try {
+            Class<?> jarClass;
+            try {
+                jarClass = Class.forName(name, true, this);
+            } catch (ClassNotFoundException e) { throw new Exception("Cannot find main class '" + name + "'", e); }
+
+            this.jarClass = jarClass;
         } catch (IOException e) { e.printStackTrace(); }
     }
 

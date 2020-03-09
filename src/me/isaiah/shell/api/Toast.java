@@ -23,19 +23,20 @@ public class Toast extends JProgram {
     private JTextArea cont;
     public static int shown;
     
-    public static void show(String tex, int ms) {
-        show(tex, ms, 420, 110, null);
+    public static Toast show(String tex, int ms) {
+        return show(tex, ms, 420, 110, null);
     }
 
-    public static void show(String tex, int ms, int width, int height, Font fo) {
+    public static Toast show(String tex, int ms, int width, int height, Font fo) {
         JFrame f = Main.f;
         Toast n = new Toast(tex, ms);
         n.setSize(width,height);
         if (null != fo)
             n.getContent().setFont(fo);
-        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Toast.shown - 1) * (3 + height)));
+        n.setLocation((f.getWidth() - width) - 5, ((f.getHeight() - height) - 50) - ((Toast.shown - 1) * (3 + height)) - 18);
         n.validate();
         Main.p.add(n, width, height);
+        return n;
     }
 
     public Toast(String content, int ms) {
@@ -70,6 +71,11 @@ public class Toast extends JProgram {
         });
         timer.setRepeats(false);
         timer.start();
+    }
+
+    @Override
+    public boolean isIconifiable() {
+        return false;
     }
 
     public JTextArea getContent() {

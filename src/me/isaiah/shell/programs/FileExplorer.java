@@ -11,6 +11,7 @@ import java.io.File;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -26,6 +27,10 @@ import me.isaiah.shell.theme.IconPack;
 public class FileExplorer extends JProgram {
 
     private static final long serialVersionUID = 1L;
+
+    public FileExplorer() {
+        this(new File(System.getProperty("user.home")));
+    }
 
     public FileExplorer(File folder) {
         this.setFrameIcon(IconPack.get().folder);
@@ -53,7 +58,7 @@ public class FileExplorer extends JProgram {
                 if (fil.isDirectory()) {
                     field.setText(fil.getAbsolutePath());
                     field.getKeyListeners()[0].keyReleased(null);
-                } else Main.newFileExplorer(fil);
+                } else newExplorer(fil);
             });
             ic.setMaximumSize(new Dimension(200, 200));
             pan.add(ic);
@@ -79,7 +84,7 @@ public class FileExplorer extends JProgram {
                                 if (fi.isDirectory()) {
                                     field.setText(fi.getAbsolutePath());
                                     field.getKeyListeners()[0].keyReleased(null);
-                                } else Main.newFileExplorer(fi);
+                                } else newExplorer(fi);
                             });
                             pan.add(ic);
                         }
@@ -88,7 +93,7 @@ public class FileExplorer extends JProgram {
                         setSize(inside.getWidth() + 20, inside.getHeight() + 20);
                         pan.validate();
                         if (max) try { setMaximum(true); } catch (PropertyVetoException e1) { e1.printStackTrace(); }
-                    } else Main.newFileExplorer(z);
+                    } else newExplorer(z);
                 }}});
         JScrollPane sp = new JScrollPane();
         sp.setViewportView(pan);
@@ -98,6 +103,25 @@ public class FileExplorer extends JProgram {
         setSize(650, 450);
 
         setContentPane(pa);
+    }
+
+    public static void newExplorer(File file) {
+        if (file.isDirectory()) {
+            FileExplorer e = new FileExplorer(file);
+            Main.p.add(e, e.getWidth(), e.getHeight());
+        } else {
+            String name = file.getName();
+            if (name.endsWith(".exe"))
+                JOptionPane.showInternalMessageDialog(Main.p, "Unsupported File type", "Explorer", 0);
+            else if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) 
+                new ImageViewer(file);
+
+            else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
+                Main.p.add(new NotePad(file));
+            //else if (name.endsWith(".jar")) pm.loadProgram(file, true);
+
+            else Main.p.add(new ProgramFileTypeOpener(file));
+        }
     }
 
 }

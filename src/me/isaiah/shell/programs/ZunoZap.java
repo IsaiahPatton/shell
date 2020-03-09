@@ -108,11 +108,11 @@ public class ZunoZap extends ZunoAPI {
         border.autosize();
 
         WebView dummy = new WebView();
-        //setUserAgent(dummy.getEngine());
-        //regMenuItems(menuFile, menuBook, aboutPageHTML(dummy.getEngine().getUserAgent(), "N/A", "ZunoZap/zunozap/master/LICENCE", "LGPLv3"), tb, en);
-        //menuBar.getMenus().addAll(menuFile, menuBook);
-        //Settings.set(cssDir, scene);
-        //scene.getStylesheets().add(ZunoAPI.stylesheet.toURI().toURL().toExternalForm());
+        setUserAgent(dummy.getEngine());
+        regMenuItems(menuFile, menuBook, aboutPageHTML(dummy.getEngine().getUserAgent(), "N/A", "ZunoZap/zunozap/master/LICENCE", "LGPLv3"), tb, en);
+        menuBar.getMenus().addAll(menuFile, menuBook);
+        Settings.set(cssDir, scene);
+        scene.getStylesheets().add(ZunoAPI.stylesheet.toURI().toURL().toExternalForm());
 
         JFXProgram inf = new JFXProgram("ZunoZap 0.7.2-port");
         inf.setScene(scene);

@@ -3,51 +3,38 @@ package me.isaiah.shell;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import jthemes.ThemeUtils;
-import jthemes.themes.ModernTheme;
 import me.isaiah.shell.api.JWebApp;
 import me.isaiah.shell.api.loader.JProgramManager;
 import me.isaiah.shell.programs.console.AdminConsole;
-import me.isaiah.shell.programs.FileExplorer;
-import me.isaiah.shell.programs.ImageViewer;
-import me.isaiah.shell.programs.NotePad;
-import me.isaiah.shell.programs.ProgramFileTypeOpener;
-import me.isaiah.shell.theme.DefaultIconPack;
-import me.isaiah.shell.theme.IconPack;
+import me.isaiah.shell.theme.DefaultTheme;
+import me.isaiah.shell.theme.Theme;
 
 public class Main {
 
-    public static final String NAME = "Desktop Envirement";
+    public static final String NAME = "Fungus Desktop Envirement";
     public static final String VERSION = "0.6-Dev";
 
     public static boolean isLowMemory;
 
-    public static final String INFO = NAME + " version " + VERSION + "<br><br>Running on Java %s<br>"
-            + "Heap size: %s<br>Low Memory Mode: " + isLowMemory;
-
-    public static final Runtime r = Runtime.getRuntime();
-    public static int ram = (int) (r.maxMemory() / 1024 / 1024);
+    public static int ram = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
     private static String mem;
 
     public static JFrame f = new JFrame();
     public static final ZDesktopPane p = new ZDesktopPane(f);
+    public static JPanel base;
 
     public static JProgramManager pm;
     public static File pStorage = new File(new File(new File(System.getProperty("user.home")),"shell"), "programs.dat");
@@ -68,16 +55,11 @@ public class Main {
     };
 
     @SuppressWarnings("unchecked")
-    public static void init() {
-        //WebLookAndFeel.install ();
-        ThemeUtils.setCurrentTheme(new ModernTheme());
-        IconPack.setIconPack(new DefaultIconPack());
+    public static void main(String[] args) {
+        Theme.setCurrentTheme(new DefaultTheme());
         AdminConsole.init();
 
-        if (ram < 256)
-            System.err.println("JVM memory of " + ram + "mb is < than the required 256mb for web browsing");
-
-        isLowMemory = ram <= 96;
+        isLowMemory = ram <= 120;
 
         double m = ram;
         if (m >= 1024) {
@@ -99,15 +81,10 @@ public class Main {
         }
 
         pm = new JProgramManager();
-        //for (String s : pr) {
-        //    try {
-        //        pm.loadProgram(new File(s));
-        //    } catch (Exception e) { System.err.println("Program Manager Unable to load '" + s + "':" + e.getLocalizedMessage());}
-        //}
 
-        p.setVisible(true);
+        JPanel loading = new LoadingScreen();
 
-        JPanel base = new JPanel() {
+        base = new JPanel() {
 
             private static final long serialVersionUID = 1L;
 
@@ -131,22 +108,17 @@ public class Main {
         base.add(p);
 
         f.setUndecorated(true);
-        f.setContentPane(base);
+        f.setContentPane(loading);
         f.setMinimumSize(new Dimension(800, 600));
         f.pack();
 
         f.setVisible(true);
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        // pm = new JProgramManager();
         Desktop.init();
         setDefaultBackground(base);
 
-        // new UpdateCheck();
-        base.validate();
-        base.repaint();
         f.validate();
-        p.add(new SystemBar());
     }
 
     public static void setDefaultBackground(JPanel base) {
@@ -155,45 +127,13 @@ public class Main {
         } catch (IOException e1) { e1.printStackTrace(); }
     }
 
-    public static void main(String[] args) {
-        init();
-    }
-
-    public static String getUrlSource(String url) {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openConnection().getInputStream(), "UTF-8"))) {
-            String line;
-            StringBuilder a = new StringBuilder();
-            while ((line = in.readLine()) != null) a.append(line);
-
-            return a.toString();
-        } catch (IOException e) { return "internet"; }
-    }
-
-    public static void newFileExplorer(File file) {
-        if (file.isDirectory()) {
-            FileExplorer e = new FileExplorer(file);
-            p.add(e, e.getWidth(), e.getHeight());
-        } else {
-            String name = file.getName();
-            if (name.endsWith(".exe"))
-                JOptionPane.showInternalMessageDialog(p, "Unsupported File type", "Explorer", 0);
-            else if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) 
-                new ImageViewer(file);
-
-            else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
-                p.add( new NotePad(file) );
-            //else if (name.endsWith(".jar")) pm.loadProgram(file, true);
-
-            else p.add(new ProgramFileTypeOpener(file));
-        }
-    }
-
     public static final void about() {
-        JWebApp w = new JWebApp("<title>About</title><div style='background-color:#e6e6e6;padding-bottom:8px;padding-right:14px;"
-                + "padding-left:14px;'><h1>" + NAME + "</h1><hr>" + String.format(INFO, 
-                        System.getProperty("java.version"), mem) + "</div>");
+        JWebApp w = new JWebApp("<title>About</title><div style='background-color:#e6e6e6;padding:8px 16px 8px 16px;'><h2>" + NAME + "</h2>"
+                + "<div style='padding:16px 0 8px 12px'>Version " + VERSION + "<br>Java version: " + Utils.getJavaVersion()
+                + "<br>Heap size: " + mem + "</div><br><small>&copy; 2020 Fungus Software - https://fungus-soft.com/</small></div>");
         w.setResizable(false);
         w.setMaximizable(false);
+        //w.setSize(307,190);
         w.setVisible(true);
         p.add(w);
     }

@@ -7,6 +7,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import me.isaiah.shell.theme.IconPack;
 
+@Deprecated
 public class JFXProgram extends JProgram {
 
     private static final long serialVersionUID = 1L;

@@ -29,6 +29,7 @@ public class NotePad extends JProgram {
     private static final long serialVersionUID = 1L;
     private File file;
 
+
     public NotePad(File fil) {
         this.setFrameIcon(IconPack.get().text);
         this.file = fil;

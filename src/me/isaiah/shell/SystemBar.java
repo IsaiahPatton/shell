@@ -24,6 +24,9 @@ public class SystemBar extends JProgram {
     private final JButton menu;
     public WindowBar wb;
 
+    public static Color barColor;
+    public static Color btnBg;
+
     public SystemBar() {
         SystemBar.get = this;
         wb = new WindowBar();
@@ -32,7 +35,7 @@ public class SystemBar extends JProgram {
         this.setDisplayInSystemBar(false);
 
         menu = new JButton("Menu");
-        menu.setBackground(Color.BLACK);
+        menu.setBackground(btnBg);
         menu.setForeground(Color.WHITE);
 
         menu.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1), menu.getBorder()));
@@ -45,7 +48,7 @@ public class SystemBar extends JProgram {
 
         p.add(wb, BorderLayout.CENTER);
         p.add(new TaskBarTray(), BorderLayout.EAST);
-        p.setBackground(Color.BLACK);
+        p.setBackground(barColor);
 
         setSize(new Dimension(Main.p.getWidth(), getPreferredSize().height + 10));
         this.setBorder(null);
@@ -70,11 +73,15 @@ public class SystemBar extends JProgram {
     }
 
     public static void setButtonBackground(Color c) {
-        get.menu.setBackground(c);
+        btnBg = c;
+        if (get != null)
+            get.menu.setBackground(c);
     }
 
     public static void setPanelBackground(Color c) {
-        get.p.setBackground(c);
+        barColor = c;
+        if (get != null)
+            get.p.setBackground(c);
     } 
 
 }

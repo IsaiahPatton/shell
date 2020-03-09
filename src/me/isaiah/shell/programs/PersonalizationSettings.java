@@ -13,29 +13,30 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import jthemes.ThemeUtils;
-import jthemes.themes.JTheme;
 import me.isaiah.shell.Main;
 import me.isaiah.shell.StartMenu;
 import me.isaiah.shell.SystemBar;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
+import me.isaiah.shell.theme.Theme;
 
-@ProgramInfo(name = "Themes", version="1.0", authors="contributers", width=800, height=600)
+@ProgramInfo(name = "Themes", version="1.0", authors="contributers", width=600, height=400)
 public class PersonalizationSettings extends JProgram {
 
     private static final long serialVersionUID = 1L;
 
     private String[] themes = {
-            "jthemes.themes.ModernTheme",
-            "jthemes.themes.AeroTheme",
-            "jthemes.themes.LunaTheme",
-            "jthemes.themes.ModernLunaTheme",
-            "jthemes.themes.MetalTheme",
-            "jthemes.themes.GrayTheme",
-            "jthemes.themes.DarkTheme",
+            "me.isaiah.shell.theme.DefaultTheme",
+            "me.isaiah.shell.theme.WindowsTheme",
+            "me.isaiah.shell.theme.BlueTheme",
+    };
+
+    private String[] wallpapers = {
+            "Yellow Shapes (Full HD) : material-design-1920x1200-stock-yellow-shapes-material-hd-14202.jpg",
+            "Green Hill (Full HD): hill-meadow-tree-green-1920x1080.jpg",
+            "Landscape (HD): landscape-1600x1000.png",
+            "Blank",
     };
 
     private Color[] bar_colors = {
@@ -57,7 +58,7 @@ public class PersonalizationSettings extends JProgram {
 
         @Override
         public String toString() {
-            return super.toString().substring(54) + ", " + ((getAlpha()/255) * 100) + "% solid";
+            return super.toString().substring(54) + ", " + Math.round((((double)getAlpha()/255) * 100)) + "% solid";
         }
     }
 
@@ -66,24 +67,38 @@ public class PersonalizationSettings extends JProgram {
         JPanel p = new JPanel();
         JPanel all = new JPanel();
         all.setLayout(new BoxLayout(all, BoxLayout.Y_AXIS));
-        JScrollPane s = new JScrollPane();
-        s.setViewportView(all);
 
         JComboBox<String> petList = new JComboBox<>(themes);
-        petList.setSelectedItem(ThemeUtils.getCurrentTheme().getClass().getName());
+        petList.setSelectedItem(Theme.getCurrentTheme().getClass().getName());
         petList.addActionListener(a -> {
             try {
-                ThemeUtils.setCurrentTheme((JTheme) Class.forName( String.valueOf(((JComboBox<?>) a.getSource()).getSelectedItem()) ).newInstance());
+                String str = themes[((JComboBox<?>) a.getSource()).getSelectedIndex()];
+                Theme.setCurrentTheme((Theme) Class.forName( str ).newInstance());
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         });
         p.add(petList);
-        p.setBorder(BorderFactory.createTitledBorder("Window Theme Selection"));
+        p.setBorder(BorderFactory.createTitledBorder("UI Theme Selection"));
 
         JPanel p2 = new JPanel();
         p2.setBorder(BorderFactory.createTitledBorder("Wallpaper"));
         JButton b = new JButton("Use system wallpaper");
+        JComboBox<String> paperList = new JComboBox<>();
+        for (String str : wallpapers)
+            paperList.addItem(str.split(":")[0]);
+        paperList.setSelectedItem(Theme.getCurrentTheme().getClass().getName());
+        paperList.addActionListener(a -> {
+            try {
+                String bg = wallpapers[((JComboBox<?>) a.getSource()).getSelectedIndex()];
+                if (bg.equals("Blank")) {
+                    Main.p.img = null;
+                    Main.p.repaint();
+                } else Main.p.setBackground(ImageIO.read(Main.class.getClassLoader().getResource("res/background/" + bg.split(":")[1].trim())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         b.addActionListener(l -> {
             try {
                 Main.p.setBackground(ImageIO.read(new File( system("WMIC PATH Win32_DESKTOP GET Wallpaper", true)[4].trim() )));
@@ -91,7 +106,7 @@ public class PersonalizationSettings extends JProgram {
                 e.printStackTrace();
             }
         });
-        p2.add(b);
+        p2.add(paperList);
 
         JPanel p3 = new JPanel();
         p3.setBorder(BorderFactory.createTitledBorder("System Bar & Menu"));
@@ -113,8 +128,17 @@ public class PersonalizationSettings extends JProgram {
         p3.add(l3);
         p3.add(l2);
 
+        p3.setVisible(false);
+
+        JButton advancedSettings = new JButton("Advanced Settings");
+        advancedSettings.addActionListener(a -> {
+            p3.setVisible(!p3.isVisible());
+            advancedSettings.setVisible(false);
+        });
+
         all.add(p);
         all.add(p2);
+        all.add(advancedSettings);
         all.add(p3);
         this.setContentPane(all);
     }

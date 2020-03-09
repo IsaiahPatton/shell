@@ -19,8 +19,7 @@ public class Desktop {
     private static int pX, pY;
 
     public static void reset() {
-        x = 10;
-        y = 10;
+        x = y = 16;
     }
 
     public static void init() {
@@ -36,19 +35,16 @@ public class Desktop {
 
                 Icon i = new Icon(f, true, Color.WHITE, true);
                 JInternalFrame ic = new JInternalFrame();
-                ic.setBackground(new Color(0,0,0,0));
                 ic.setOpaque(false);
                 ic.setName("DESKTOP_ICON");
 
                 if (y > (p.getHeight() - 130) && p.getHeight() > 2) {
-                    y = 10;
+                    y = 16;
                     x = x + 75;
                 }
 
                 ic.setLocation(x, y);
-                BasicInternalFrameUI ui = ((BasicInternalFrameUI)ic.getUI());
-                ui.setNorthPane(null);
-                ic.putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);
+                ((BasicInternalFrameUI)ic.getUI()).setNorthPane(null);
                 ic.setContentPane(i);
 
                 MouseAdapter m = new MouseAdapter() {
@@ -67,13 +63,13 @@ public class Desktop {
                 ic.setBorder(null);
                 ic.setVisible(true);
                 ic.pack();
-                y += ic.getHeight() + 14;
-                p.add(ic);
-                p.setComponentZOrder(ic, 0);
+                y += ic.getHeight() + 24;
+
+                p.setComponentZOrder(p.add(ic), 0);
                 if (p.getPosition(ic) > 0)
                     p.moveToBack(ic);
-                p.validate();
-                ic.setSize(62, ic.getHeight());
+
+                ic.setSize(64, ic.getHeight());
             }
         }, "DesktopInit").start();
     }

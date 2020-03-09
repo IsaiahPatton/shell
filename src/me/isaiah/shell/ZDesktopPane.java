@@ -1,5 +1,6 @@
 package me.isaiah.shell;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
@@ -10,9 +11,7 @@ import java.awt.event.ContainerListener;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.JInternalFrame.JDesktopIcon;
 
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.Toast;
@@ -30,21 +29,6 @@ public class ZDesktopPane extends JDesktopPane {
         this.addContainerListener(new DesktopContainerListener());
     }
 
-    public void setLAF(String className) {
-        Utils.runAsync(() -> {
-            try {
-                UIManager.setLookAndFeel(className);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
-            }
-            SwingUtilities.updateComponentTreeUI(Main.f);
-            Main.p.removeAll();
-
-            Desktop.reset();
-            Desktop.init();
-        });
-    }
-
     public void setBackground(Image img) {
         if (this.img == null) {
             f.addComponentListener(new ComponentAdapter() {  
@@ -53,7 +37,10 @@ public class ZDesktopPane extends JDesktopPane {
                 }
             });
         }
+
         this.img = img.getScaledInstance(f.getWidth(), f.getHeight(), 0);
+        this.setBackground(new Color(50,104,168));
+        repaint();
     }
 
     public void add(JProgram j, int width, int height) {
@@ -64,22 +51,21 @@ public class ZDesktopPane extends JDesktopPane {
 
     @Override
     public void addImpl(Component j, Object constraints, int index) {
-
         StartMenu.stop();
 
+        if (j instanceof JProgram)
+            ((JProgram)j).setIconifiable(true);
         j.setVisible(true);
         super.addImpl(j, constraints, index);
         moveToFront(j);
     }
 
     private class DesktopContainerListener implements ContainerListener {
-        
-        private boolean d = false;
         int i = 0;
 
         public void componentAdded(ContainerEvent event) {
-            if (d) return;
-
+            if (event.getChild() instanceof JDesktopIcon)
+                return;
             JInternalFrame j = (JInternalFrame) event.getChild();
             if (null == j.getClientProperty("dontDisplayInWindowBar")) {
                 JInternalFrame jp = (JInternalFrame) j;
@@ -89,8 +75,7 @@ public class ZDesktopPane extends JDesktopPane {
         }
 
         public void componentRemoved(ContainerEvent event) {
-            i++;
-            if (i < 3) return;
+            if (i++ < 3) return;
 
             JInternalFrame j = (JInternalFrame) event.getChild();
             if (!(j instanceof StartMenu || j instanceof Toast || j instanceof SystemBar))

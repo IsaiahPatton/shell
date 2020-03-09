@@ -18,10 +18,10 @@ public class JProgramManager {
     public ProgramClassLoader classLoader;
 
     public void loadProgram(File f) {
-        loadProgram(f, false);
+        loadProgram(f, false, true);
     }
 
-    public void loadProgram(File f, boolean b) {
+    public void loadProgram(File f, boolean b, boolean menu) {
         if (!f.isDirectory() && f.getName().endsWith(".jar")) {
             try (JarFile jar = new JarFile(f)) {
                 Manifest m = jar.getManifest();
@@ -42,7 +42,8 @@ public class JProgramManager {
                     Toast.show("Registered \"" + name + "\" to Programs menu", 5000, 300, 60, null);
                 }
 
-                StartMenu.addProgram(program.getClass());
+                if (menu)
+                    StartMenu.addProgram(program.getClass());
 
                 if (b) {
                     program.setVisible(true);
@@ -50,7 +51,7 @@ public class JProgramManager {
                     Main.p.add(program);
                 }
             } catch (Exception e) {
-                 Toast.show("ProgramManager: Unable to start '" + f.getName() + "':" + e.getLocalizedMessage(), 2500);
+                 Toast.show("ProgramManager: Unable to start\n '" + f.getName() + "':" + e.getLocalizedMessage(), 2500);
             }
         }
     }
@@ -60,7 +61,17 @@ public class JProgramManager {
             classLoader = new ProgramClassLoader(new ProgramLoader(), getClass().getClassLoader(), main, uri);
             return classLoader.plugin;
         } catch (Exception e) {
-            Toast.show("ProgramManager: Unable to start program:" + e.getLocalizedMessage(), 2500);
+            Toast.show("ProgramManager: Unable to start program:\n" + e.getLocalizedMessage(), 2500);
+            return null;
+        }
+    }
+    
+    public Class<?> loadFromNonJProgramURI(String main, URI uri) {
+        try {
+            classLoader = new ProgramClassLoader(new ProgramLoader(), getClass().getClassLoader(), main, uri, true);
+            return classLoader.jarClass;
+        } catch (Exception e) {
+            Toast.show("ProgramManager: Unable to start program:\n" + e.getLocalizedMessage(), 2500);
             return null;
         }
     }

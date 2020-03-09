@@ -139,6 +139,7 @@ public class StartMenu extends JProgram {
         addProgram(NotePad.class);
         addProgram(Calc.class);
         addProgram(Minesweeper.class);
+        addProgram(Minecraft.class);
 
         this.setOpaque(false);
         tiles = new JPanel();
@@ -147,7 +148,7 @@ public class StartMenu extends JProgram {
         tiles.setOpaque(false);
 
         ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calc(), 200, 200));
-        ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.newFileExplorer(root));
+        ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.p.add(new FileExplorer(root)));
         ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new CopperBrowser(), 1200, 800));
 
         JMenu me = new JMenu(System.getProperty("user.name"));
@@ -220,7 +221,7 @@ public class StartMenu extends JProgram {
         setDisplayInSystemBar(false);
         setVisible(true);
         pack();
-        this.setPreferredSize(new Dimension(589, 550));
+        this.setPreferredSize(new Dimension(589, 600));
         this.setBorder(null);
     }
 

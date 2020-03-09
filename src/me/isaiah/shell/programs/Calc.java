@@ -58,7 +58,6 @@ public class Calc extends JProgram implements ActionListener{
         panel.add(simple);
         p.add(panel, "Center");
         setContentPane(p);
-        //pack();
     }
 
     public void actionPerformed(ActionEvent evt) {

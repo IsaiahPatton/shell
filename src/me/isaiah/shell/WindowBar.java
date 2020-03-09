@@ -92,9 +92,7 @@ public class WindowBar extends JPanel {
 
         public FrameWrapper(JInternalFrame frame) {
             int size = SystemBar.get.getHeight() / 2;
-            ImageIcon icon = (ImageIcon) frame.getFrameIcon();
-            icon.setImage(icon.getImage().getScaledInstance(size, size, 0));
-            super.setIcon(icon);
+            setIcon(new ImageIcon(((ImageIcon)frame.getFrameIcon()).getImage().getScaledInstance(size, size, 0)));
             this.frame = frame;
             this.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
             this.addMouseListener(new MouseAdapter() {
@@ -105,6 +103,10 @@ public class WindowBar extends JPanel {
                 @Override
                 public void mouseExited(MouseEvent e) {
                     setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+                }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    frame.setVisible(true);
                 }
             });
             repaint();

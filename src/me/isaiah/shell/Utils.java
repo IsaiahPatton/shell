@@ -19,4 +19,9 @@ public class Utils {
         public void click(MouseEvent e);
     }
 
+    public static String getJavaVersion() {
+        double i = Double.valueOf(System.getProperty("java.class.version"));
+        return (i - 44) + "&nbsp;<small>(" + System.getProperty("java.version") + "-" + System.getProperty("java.vendor") + ")</small>";
+    }
+
 }

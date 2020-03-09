@@ -1,14 +1,12 @@
 package me.isaiah.shell.api;
 
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.beans.PropertyVetoException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
+import javax.swing.JFrame;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import jthemes.StyledJInternalFrame;
@@ -18,9 +16,9 @@ import me.isaiah.shell.SystemBar;
 /**
  * API class for Program developers
  * 
- * In most cases you can replace JFrames with this
- * as this is a JInternalFrame
+ * In most cases you can replace JFrames with this as this is a JInternalFrame
  */
+@ProgramInfo(name="Untitled Program")
 public class JProgram extends StyledJInternalFrame {
 
     private static final long serialVersionUID = 1L;
@@ -90,6 +88,13 @@ public class JProgram extends StyledJInternalFrame {
 
     public void setDisplayInSystemBar(boolean b) {
         this.putClientProperty("dontDisplayInWindowBar", b ? null : true);
+    }
+    
+    @Override
+    public void setState(int i) {
+        if (i == JFrame.ICONIFIED) {
+            setVisible(false);
+        } else super.setState(i);
     }
 
 }
