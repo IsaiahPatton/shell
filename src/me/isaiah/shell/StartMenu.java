@@ -35,9 +35,15 @@ import javax.swing.event.InternalFrameEvent;
 import me.isaiah.shell.Utils.IClick;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
-import me.isaiah.shell.programs.*;
+import me.isaiah.shell.programs.Calc;
+import me.isaiah.shell.programs.CopperBrowser;
+import me.isaiah.shell.programs.FileExplorer;
+import me.isaiah.shell.programs.MineSweeper;
+import me.isaiah.shell.programs.Minecraft;
+import me.isaiah.shell.programs.NotePad;
+import me.isaiah.shell.programs.PersonalizationSettings;
+import me.isaiah.shell.programs.WebBrowser;
 import me.isaiah.shell.programs.console.AdminConsole;
-import me.isaiah.shell.programs.console.Console;
 import me.isaiah.shell.programs.console.TabbedConsole;
 import me.isaiah.shell.theme.DefaultIconPack;
 import me.isaiah.shell.theme.IconPack;
@@ -168,7 +174,7 @@ public class StartMenu extends JProgram {
         addProgram(WebBrowser.class);
         addProgram(NotePad.class);
         addProgram(Calc.class);
-        addProgram(Minesweeper.class);
+        addProgram(MineSweeper.class);
         addProgram(Minecraft.class);
 
         this.setOpaque(false);
