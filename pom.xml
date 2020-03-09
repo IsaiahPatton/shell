@@ -1,0 +1,82 @@
+    <project>
+        <modelVersion>4.0.0</modelVersion>
+      <groupId>me.isaiah</groupId>
+      <artifactId>DesktopEnvirement</artifactId>
+      <version>indev</version>
+        
+        <properties>
+            <maven.compiler.source>1.8</maven.compiler.source>
+            <maven.compiler.target>1.8</maven.compiler.target>
+       </properties>
+
+      <build>
+        <directory>${project.basedir}/target</directory>
+        <outputDirectory>${project.build.directory}/classes</outputDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
+        <sourceDirectory>${project.basedir}/src/</sourceDirectory>
+        <scriptSourceDirectory>${project.basedir}/src/main/scripts</scriptSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+        <resources>
+          <resource>
+            <directory>${project.basedir}/src/</directory>
+          </resource>
+        </resources>
+        <testResources>
+          <testResource>
+            <directory>${project.basedir}/src/</directory>
+          </testResource>
+        </testResources>
+      </build>
+
+      <profiles>
+        <!-- NOTE: The release profile will be removed from future versions of the super POM -->
+        <profile>
+          <id>release-profile</id>
+     
+          <activation>
+            <property>
+              <name>performRelease</name>
+              <value>true</value>
+            </property>
+          </activation>
+     
+          <build>
+            <plugins>
+              <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                      <goal>jar</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                  <updateReleaseInfo>true</updateReleaseInfo>
+                </configuration>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
+      </profiles>
+     
+    </project>
