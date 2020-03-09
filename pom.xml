@@ -41,7 +41,11 @@
                 </execution>
             </executions>
             <configuration>
-                <minimizeJar>true</minimizeJar>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <Main-Class>me.isaiah.shell.Main</Main-Class>
+                </transformer>
+              </transformers>
             </configuration>
         </plugin>
     </plugins>
@@ -52,23 +56,27 @@
         <id>com.teamdev</id>
         <url>https://maven.teamdev.com/repository/products</url>
     </repository>
+    <repository>
+        <id>myrepo</id>
+        <url>file://${project.basedir}/libs/</url>
+    </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.sexydock</groupId>
+            <groupId>com.fungus-soft</groupId>
             <artifactId>Jhrome</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/Jhrome.jar</systemPath>
+            <scope>compile</scope>
+            <!--<systemPath>${basedir}/libs/Jhrome.jar</systemPath>-->
         </dependency>
 
         <dependency>
             <groupId>com.fungus-soft</groupId>
             <artifactId>JThemes</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/JThemes.jar</systemPath>
+            <scope>compile</scope>
+            <!--<systemPath>${basedir}/libs/JThemes.jar</systemPath>-->
         </dependency>
         
         <dependency>
@@ -79,11 +87,11 @@
         </dependency>
         
         <dependency>
-            <groupId>com.zunozap</groupId>
-            <artifactId>ZunoZap-0.8</artifactId>
+            <groupId>com.fungus-soft</groupId>
+            <artifactId>ZunoZap</artifactId>
             <version>0.8.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/ZunoZap-0.8.0.jar</systemPath>
+            <scope>compile</scope>
+            <!--<systemPath>${basedir}/libs/ZunoZap-0.8.0.jar</systemPath>-->
         </dependency>
     </dependencies>
 
