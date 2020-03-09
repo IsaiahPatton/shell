@@ -28,7 +28,7 @@ import me.isaiah.shell.api.Toast;
  * @blog http://adchowdhury.blogspot.com/
 */
 @ProgramInfo(name = "Minesweeper", version="1.0", authors="Aniruddha Dutta Chowdhury", width=300,height=400)
-public class Minesweeper extends JProgram implements ActionListener {
+public class MineSweeper extends JProgram implements ActionListener {
     private static final long serialVersionUID = 1L;
 
     public static enum State { Clicked, Marked, Initial, WrongMarked }
@@ -55,7 +55,7 @@ public class Minesweeper extends JProgram implements ActionListener {
         th.start();
     }
 
-    public Minesweeper() {
+    public MineSweeper() {
         JPanel cp = new JPanel();
         cp.setLayout(new BorderLayout());
         setContentPane(cp);
