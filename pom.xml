@@ -46,6 +46,13 @@
         </plugin>
     </plugins>
       </build>
+    
+    <repositories>
+    <repository>
+        <id>com.teamdev</id>
+        <url>https://maven.teamdev.com/repository/products</url>
+    </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -62,6 +69,13 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/JThemes.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+          <groupId>com.teamdev.jxbrowser</groupId>
+          <artifactId>jxbrowser</artifactId>
+          <version>6.24.2</version>
+          <scope>provided</scope>
         </dependency>
         
         <dependency>

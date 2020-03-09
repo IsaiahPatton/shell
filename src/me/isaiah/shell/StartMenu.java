@@ -39,7 +39,6 @@ import me.isaiah.shell.programs.*;
 import me.isaiah.shell.programs.console.AdminConsole;
 import me.isaiah.shell.programs.console.Console;
 import me.isaiah.shell.programs.console.TabbedConsole;
-import me.isaiah.shell.programs.console.Test;
 import me.isaiah.shell.theme.DefaultIconPack;
 import me.isaiah.shell.theme.IconPack;
 import me.isaiah.shell.ui.ModernScrollPane;

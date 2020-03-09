@@ -8,7 +8,6 @@ import java.util.jar.Manifest;
 
 import me.isaiah.shell.Main;
 import me.isaiah.shell.StartMenu;
-import me.isaiah.shell.api.DemoInfo;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 import me.isaiah.shell.api.Toast;
@@ -30,7 +29,7 @@ public class JProgramManager {
 
                 JProgram program = classLoader.plugin;
                 ProgramInfo i = program.getClass().getAnnotation(ProgramInfo.class);
-                ProgramInfo info = i == null ? info = DemoInfo.class.getAnnotation(ProgramInfo.class) : i;
+                ProgramInfo info = i == null ? info = JProgram.class.getAnnotation(ProgramInfo.class) : i;
                 String name = info.name();
 
                 if (name.equalsIgnoreCase("JFrame")) name = f.getName().substring(0, f.getName().indexOf(".jar"));
