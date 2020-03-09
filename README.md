@@ -1,4 +1,4 @@
-### My Desktop Envirement
+# Fungus Desktop Envirement
 
 A lite UI written in Java Swing (&amp; JavaFX for [web browser](http://github.com/zunozap/zunozap))
 
