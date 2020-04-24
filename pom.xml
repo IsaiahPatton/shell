@@ -82,7 +82,7 @@
         <dependency>
           <groupId>com.teamdev.jxbrowser</groupId>
           <artifactId>jxbrowser</artifactId>
-          <version>6.24.2</version>
+          <version>7.6</version>
           <scope>provided</scope>
         </dependency>
         
