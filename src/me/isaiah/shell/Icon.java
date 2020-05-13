@@ -60,7 +60,7 @@ public class Icon extends OutlineLabel {
         }
 
         if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html")) 
-            setIcon("text.png");
+            setIcon(pack.text);
 
         if (name.endsWith(".jar")) {
             setIcon("jar.png");
@@ -71,7 +71,7 @@ public class Icon extends OutlineLabel {
             setIcon("exe.png");
 
         if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg"))
-            setIcon("img.png");
+            setIcon(pack.img);
 
         if (!hasIcon) setIconFromSystem();
         if (!hasIcon) setIcon(pack.blank);

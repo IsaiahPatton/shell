@@ -3,6 +3,8 @@ package me.isaiah.shell;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,7 +26,7 @@ import me.isaiah.shell.theme.Theme;
 public class Main {
 
     public static final String NAME = "Fungus Desktop Envirement";
-    public static final String VERSION = "0.6-Dev";
+    public static final String VERSION = "2020.4";
 
     public static boolean isLowMemory;
 
@@ -86,6 +88,7 @@ public class Main {
 
             @Override
             public void paintComponent(Graphics g) {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 super.paintComponent(g);
                 if (!isLowMemory && null != p.img)
                     g.drawImage(p.img, 0, 0, null);
@@ -94,9 +97,9 @@ public class Main {
                     g.drawString("LOW MEMORY MODE [" + mem + "]", (getWidth() / 2) - 70, getHeight() / 2);
 
                 g.setColor(Color.GRAY);
-                g.drawString("Version " + Main.VERSION, getWidth() - (102 + (Main.VERSION.length() * 3)), 18);
-                g.drawString("Java Verison: " + System.getProperty("java.version"), getWidth() - 151, 33);
-                g.drawString("JVM Memory: " + mem, getWidth() - 151, 47);
+                g.drawString(NAME + " version " + VERSION, getWidth() - 260, 20);
+                g.drawString("Java Verison: " + Utils.getJavaVersion().substring(0, Utils.getJavaVersion().indexOf("&")), getWidth() - 255, 36);
+                g.drawString("JVM Memory: " + mem, getWidth() - 145, 36);
             }
         };
         base.setBackground(new Color(60, 123, 250));
@@ -108,6 +111,7 @@ public class Main {
         f.setMinimumSize(new Dimension(800, 600));
         f.pack();
 
+        f.setIgnoreRepaint(true);
         f.setVisible(true);
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 

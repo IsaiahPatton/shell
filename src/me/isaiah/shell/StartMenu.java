@@ -2,6 +2,7 @@ package me.isaiah.shell;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -36,9 +37,10 @@ import me.isaiah.shell.Utils.IClick;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 import me.isaiah.shell.programs.Calc;
+import me.isaiah.shell.programs.ChromeBrowser;
 import me.isaiah.shell.programs.CopperBrowser;
 import me.isaiah.shell.programs.FileExplorer;
-import me.isaiah.shell.programs.MineSweeper;
+import me.isaiah.shell.programs.Mines;
 import me.isaiah.shell.programs.Minecraft;
 import me.isaiah.shell.programs.NotePad;
 import me.isaiah.shell.programs.PersonalizationSettings;
@@ -174,18 +176,33 @@ public class StartMenu extends JProgram {
         addProgram(WebBrowser.class);
         addProgram(NotePad.class);
         addProgram(Calc.class);
-        addProgram(MineSweeper.class);
-        addProgram(Minecraft.class);
+        addProgram(Mines.class);
+        addProgram(ChromeBrowser.class);
 
         this.setOpaque(false);
-        tiles = new JPanel();
+        tiles = new JPanel() {
+            @Override
+            public Component add(Component c) {
+                JPanel p = new JPanel();
+                p.setOpaque(false);
+                p.add(c);
+                super.add(p);
+                return c;
+            }
+        };
         tiles.setMinimumSize(new Dimension(100,450));
+        tiles.setLayout(new GridLayout(0,3));
         tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : tilesBackground);
         tiles.setOpaque(false);
 
-        ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calc(), 200, 200));
+        File mainDir = root;
+        //while ((mainDir = root.getParentFile()) != null);
+        File mainDir_final = mainDir;
+
+        ((Tile)tiles.add(new Tile("pc", "My PC"))).onClick(l -> Main.p.add(new FileExplorer(mainDir_final)));
         ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.p.add(new FileExplorer(root)));
-        ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new CopperBrowser(), 1200, 800));
+        ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calc(), 245, 330));
+        ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new WebBrowser(), 1200, 800));
 
         JMenu me = new JMenu(System.getProperty("user.name"));
         me.setForeground(Color.white);
@@ -245,7 +262,10 @@ public class StartMenu extends JProgram {
         b.setOpaque(false);
         b.setLayout(new BoxLayout(b, BoxLayout.X_AXIS));
         b.add(sp);
-        b.add(tiles);
+        JPanel a = new JPanel();
+        a.add(tiles);
+        a.setOpaque(false);
+        b.add(a);
         tiles.setMaximumSize(new Dimension(512, 900));
         p.add(b, BorderLayout.CENTER);
         p.add(ba, BorderLayout.SOUTH);

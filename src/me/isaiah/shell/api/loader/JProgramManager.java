@@ -21,18 +21,19 @@ public class JProgramManager {
     }
 
     public void loadProgram(File f, boolean b, boolean menu) {
+        new Thread(() -> {
         if (!f.isDirectory() && f.getName().endsWith(".jar")) {
             try (JarFile jar = new JarFile(f)) {
                 Manifest m = jar.getManifest();
                 String main = m.getMainAttributes().getValue(Name.MAIN_CLASS);
                 classLoader = new ProgramClassLoader(new ProgramLoader(), getClass().getClassLoader(), main, f.toURI());
+                if (classLoader.plugin == null)
+                    return;
 
                 JProgram program = classLoader.plugin;
                 ProgramInfo i = program.getClass().getAnnotation(ProgramInfo.class);
                 ProgramInfo info = i == null ? info = JProgram.class.getAnnotation(ProgramInfo.class) : i;
                 String name = info.name();
-
-                if (name.equalsIgnoreCase("JFrame")) name = f.getName().substring(0, f.getName().indexOf(".jar"));
 
                 if (!Main.pr.contains(f.getAbsolutePath())) {
                     Main.pStorage.getParentFile().mkdirs();
@@ -53,6 +54,7 @@ public class JProgramManager {
                  Toast.show("ProgramManager: Unable to start\n '" + f.getName() + "':" + e.getLocalizedMessage(), 2500);
             }
         }
+        }).start();
     }
 
     public JProgram getFromURI(String main, URI uri) {

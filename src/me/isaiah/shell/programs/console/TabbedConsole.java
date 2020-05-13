@@ -32,7 +32,7 @@ public class TabbedConsole extends JProgram {
 
         tb.putClientProperty( JhromeTabbedPaneUI.TAB_CLOSE_BUTTONS_VISIBLE, true );
         tb.putClientProperty( JhromeTabbedPaneUI.NEW_TAB_BUTTON_VISIBLE, true );
-        
+
         MouseAdapter e = Utils.click(a -> {
             int i = tb.getTabCount();
             Console c = new Console() {

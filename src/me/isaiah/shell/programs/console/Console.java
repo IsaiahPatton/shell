@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -115,7 +116,10 @@ public class Console extends JProgram {
                 system(args, true);
                 break;
             case "dir":
-                add(System.getProperty("user.dir"));
+                File[] files = currentPath.listFiles();
+                for (File f : files) {
+                    add(new Date(f.lastModified()) + "\t" + (f.isDirectory() ? "<DIR>" : "") + "\t" + f.getName());
+                }
                 break;
             case "echo":
                 add(command.substring(4).trim());
@@ -147,6 +151,22 @@ public class Console extends JProgram {
                 break;
             case "note":
                 Toast.show(command, 4500);
+                break;
+            case "cd":
+                if (args.length == 1) {
+                    add(currentPath.getAbsolutePath());
+                    break;
+                }
+                File newPath = new File(currentPath, args[1]);
+                if (newPath.exists()) {
+                    currentPath = newPath;
+                    break;
+                }
+                newPath = new File(args[1]);
+                if (newPath.exists()) {
+                    currentPath = newPath;
+                    break;
+                }
                 break;
             case "help":
                 add("===== Help =====", Color.CYAN);

@@ -2,79 +2,94 @@ package me.isaiah.shell.programs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
-
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
 
-@ProgramInfo(name = "Calculator", width=200, height=300)
-public class Calc extends JProgram implements ActionListener{
+@ProgramInfo(name = "Calculator", width=245, height=330)
+public class Calc extends JProgram {
 
     private static final long serialVersionUID = 1L;
-    private JTextField display = new JTextField("0");
-    private double result = 0;
+
+    private JLabel display;
+    private float result = 0;
     private String operator = "=";
     private boolean calculating = true;
 
     public Calc() {
+        display = new JLabel("0", SwingConstants.RIGHT);
+        result = 0;
+        operator = "=";
+        calculating = true;
+
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
+        p.add(display, BorderLayout.NORTH);
+        display.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), BorderFactory.createEmptyBorder(12,2,12,18)));
+        display.setFont(display.getFont().deriveFont(16f));
+        p.setBorder(BorderFactory.createEmptyBorder(14,10,10,10));
+        display.setBackground(Color.WHITE);
+        display.setOpaque(true);
 
-        display.setEditable(false);
-        p.add(display, "North");
-
-        JPanel panel = new JPanel(new GridLayout(1,1));
         JPanel simple = new JPanel();
+        simple.setBorder(BorderFactory.createEmptyBorder(14,0,0,0));
         simple.setLayout(new GridLayout(5, 4));
 
         String buttonLabels = "789/456*123-0.=+";
-        ((JButton)simple.add(new JButton("C"))).addActionListener(a -> {
-            operator = "C";
-            calculate(Double.parseDouble(display.getText()));
-        });
-        ((JButton)simple.add(new JButton("\u221A"))).addActionListener(a -> {
-            operator = "\u221A";
-            calculate(Double.parseDouble(display.getText()));
-        });
-        simple.add(new JSeparator(SwingConstants.VERTICAL));
-        JButton off = ((JButton)simple.add(new JButton("X")));
-        off.addActionListener(l -> {
-            operator = "X";
-            calculate(Double.parseDouble(display.getText()));
-        });
-        off.setBackground(Color.RED);
-        for (int i = 0; i < buttonLabels.length(); i++)
-            ((JButton)simple.add(new JButton(buttonLabels.substring(i, i + 1)))).addActionListener(this);
 
-        panel.add(simple);
-        p.add(panel, "Center");
+        ((JButton)simple.add(new JButton("C"))).addActionListener(l -> {
+            operator = "C";
+            calculate(0);
+        });
+
+        ((JButton)simple.add(new JButton("+-"))).addActionListener(l -> {
+            operator = "neg";
+            calculate(Float.parseFloat(display.getText()));
+        });
+
+        ((JButton)simple.add(new JButton("<"))).addActionListener(l -> {
+            operator = "<-";
+            calculate(Float.parseFloat(display.getText()));
+        });
+
+        simple.add(new JButton(""));
+
+        for (int i = 0; i < buttonLabels.length(); i++) {
+            int i_final = i;
+            JButton btn = ((JButton)simple.add(new JButton(buttonLabels.substring(i, i + 1))));
+            char ch = btn.getText().charAt(0);
+            if ('0' <= ch && ch <= '9' || ch == '.') 
+                btn.setBackground(Color.WHITE);
+
+            btn.addActionListener(l -> actionPerformed(buttonLabels.substring(i_final, i_final + 1)));
+        }
+
+        for (Component c : simple.getComponents())
+            c.setFont(c.getFont().deriveFont(14f));
+
+        p.add(simple, BorderLayout.CENTER);
         setContentPane(p);
     }
 
-    public void actionPerformed(ActionEvent evt) {
-        String cmd = evt.getActionCommand();
-        if ('0' <= cmd.charAt(0) && cmd.charAt(0) <= '9' || cmd.equals(".")) {
+    public void actionPerformed(String cmd) {
+        if (('0' <= cmd.charAt(0) && cmd.charAt(0) <= '9') || cmd.equals(".") || cmd.equals("neg")) {
             if (calculating) display.setText(cmd);
             else display.setText(display.getText() + cmd);
 
             calculating = false;
         } else {
             if (calculating) {
-                if (cmd.equals("-")) {
-                    display.setText(cmd);
-                    calculating = false;
-                } else operator = cmd;
+                operator = cmd;
             } else {
-                double x = Double.parseDouble(display.getText());
+                float x = Float.parseFloat(display.getText());
                 calculate(x);
                 operator = cmd;
                 calculating = true;
@@ -82,7 +97,7 @@ public class Calc extends JProgram implements ActionListener{
         }
     }
 
-    private void calculate(double n) {
+    private void calculate(float n) {
         switch (operator) {
             case "+":
                 result += n;
@@ -99,17 +114,25 @@ public class Calc extends JProgram implements ActionListener{
             case "=":
                 result = n;
                 break;
-            case "\u221A":
-                result = Math.sqrt(n);
-                break;
             case "C":
-                result = 0;
+                this.calculating = true;
+                result = n;
                 break;
-            case "X":
-                try { this.setClosed(true); } catch (PropertyVetoException e) {}
+            case "neg": {
+                this.calculating = true;
+                if (Float.parseFloat(display.getText()) > 0) {
+                    display.setText("-" + n);
+                } else {
+                    display.setText(("" + n).replace("-", ""));
+                }
+                result = Float.parseFloat(display.getText());
+                n = result;
                 break;
+            }
         }
-        display.setText("" + result);
+        if (String.valueOf(result).endsWith(".0"))
+            display.setText("" + (int)result);
+        else display.setText("" + result);
     }
 
  }

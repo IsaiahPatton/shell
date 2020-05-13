@@ -57,7 +57,6 @@ public class ZDesktopPane extends JDesktopPane {
             ((JProgram)j).setIconifiable(true);
         j.setVisible(true);
         super.addImpl(j, constraints, index);
-        moveToFront(j);
     }
 
     private class DesktopContainerListener implements ContainerListener {

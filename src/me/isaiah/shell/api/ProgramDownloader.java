@@ -1,8 +1,10 @@
 package me.isaiah.shell.api;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +17,8 @@ import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
 import me.isaiah.downloadmanager.Download;
+import me.isaiah.shell.Main;
+import me.isaiah.shell.SystemBar;
 
 @ProgramInfo(name = "Software Update", version="1.0", width=900, height=700)
 public class ProgramDownloader extends JProgram {
@@ -25,16 +29,20 @@ public class ProgramDownloader extends JProgram {
     private static int i = 0;
 
     public DownloadAction a;
+    public boolean finished;
 
     public ProgramDownloader(String url, File targetDir, DownloadAction a) throws IOException {
+        super("Program Update", false, false, false);
         this.a = a;
+        this.finished = false;
         targetDir.mkdirs();
 
         Download d = new Download(new URL(url), targetDir);
 
         JProgressBar pb = new JProgressBar(0, 150);
         this.setTitle("Program Update");
-        JLabel z = new JLabel("Loading") {
+
+        JLabel z = new JLabel("Updating") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -43,18 +51,22 @@ public class ProgramDownloader extends JProgram {
                 int k = (int)(getWidth()*(pb.getValue()/150.0f));
                 g.setFont(new Font("Dialog", 0, 12));
                 g.setColor(Color.ORANGE);
-                g.fillRect(0, getHeight() - 5, k, 5);
+                g.fillRect(0, getHeight() - 10, k, 10);
                 g.setColor(Color.WHITE);
                 String str = formatSize(d.getDownloaded()) + " / " + formatSize(d.getSize()) + " [Status=" + Download.STATUSES[d.getStatus()] + "]";
                 g.drawString("Downloading program, Please wait.", (getWidth() / 2) - (3 * 32), 24);
                 g.drawString(str, (getWidth() / 2) - (3 * str.length()), getHeight() - 15);
             }
         };
-        z.setFont(new Font("Dialog", Font.BOLD, 56));
+        z.setFont(new Font("Dialog", Font.BOLD, 48));
         z.setForeground(Color.WHITE);
+        z.setBackground(Color.BLACK);
+        z.setOpaque(true);
         z.setBorder(new EmptyBorder(30,65,30,65));
+        //z.setOpaque(false);
         //this.setUndecorated(true);
-        this.setBackground(new Color(0,0,0,235));
+        this.setOpaque(true);
+        this.setBackground(Color.BLACK);
 
         new Thread(() -> { Timer t = new Timer();t.schedule(new TimerTask() { @Override public void run() {
             pb.setValue((int) d.getProgress());
@@ -65,15 +77,17 @@ public class ProgramDownloader extends JProgram {
                 t.cancel();
                 try {
                     setClosed(true);
-                } catch (PropertyVetoException e) {
-                    e.printStackTrace();
-                }
+                } catch (PropertyVetoException e) {e.printStackTrace();}
+                finished = true;
                 a.onFinished();
             }
         }}, 20, 500);}).start();
 
         this.setContentPane(z);
         this.pack();
+        Dimension p = Main.p.getSize();
+        this.setLocation(p.width/2 - getWidth()/2, (p.height/2 - getHeight()/2) - SystemBar.get.getHeight());
+        this.setSize(this.getWidth(), this.getHeight()+30);
         this.setVisible(true);
     }
 

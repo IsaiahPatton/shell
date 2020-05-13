@@ -20,6 +20,7 @@ import me.isaiah.shell.Icon;
 import me.isaiah.shell.Main;
 import me.isaiah.shell.api.JProgram;
 import me.isaiah.shell.api.ProgramInfo;
+import me.isaiah.shell.api.Toast;
 import me.isaiah.shell.theme.IconPack;
 
 // TODO Create advanced File Manager
@@ -88,9 +89,7 @@ public class FileExplorer extends JProgram {
                             });
                             pan.add(ic);
                         }
-                        inside.pack();
-                        inside.setSize(inside.getWidth() + 20, inside.getHeight() + 20);
-                        setSize(inside.getWidth() + 20, inside.getHeight() + 20);
+                        pack();
                         pan.validate();
                         if (max) try { setMaximum(true); } catch (PropertyVetoException e1) { e1.printStackTrace(); }
                     } else newExplorer(z);
@@ -112,13 +111,13 @@ public class FileExplorer extends JProgram {
         } else {
             String name = file.getName();
             if (name.endsWith(".exe"))
-                JOptionPane.showInternalMessageDialog(Main.p, "Unsupported File type", "Explorer", 0);
+                Toast.show("Unsupported File Type", 4000);
             else if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif") || name.endsWith(".jpeg")) 
                 new ImageViewer(file);
 
             else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
                 Main.p.add(new NotePad(file));
-            //else if (name.endsWith(".jar")) pm.loadProgram(file, true);
+            else if (name.endsWith(".jar")) Main.pm.loadProgram(file, true, true);
 
             else Main.p.add(new ProgramFileTypeOpener(file));
         }
