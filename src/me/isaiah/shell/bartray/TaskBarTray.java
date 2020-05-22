@@ -2,7 +2,7 @@ package me.isaiah.shell.bartray;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -34,7 +34,9 @@ public class TaskBarTray extends JPanel {
         timer.start();
 
         add(new InternetIcon());
-        add(new PowerIcon());
+        PowerIcon power = new PowerIcon();
+        if (power.hasBattery())
+            add(power);
 
         add(t);
     }
@@ -43,11 +45,10 @@ public class TaskBarTray extends JPanel {
         return inst;
     }
 
-    @SuppressWarnings("deprecation")
     public static String getTime() {
-        Date d = new Date();
+        LocalDateTime d = LocalDateTime.now();
 
-        int hour = d.getHours();
+        int hour = d.getHour();
         String apm = " AM";
         if (hour > 13) {
             hour -= 12;
@@ -55,7 +56,7 @@ public class TaskBarTray extends JPanel {
         }
         if (hour == 0) hour = 12;
 
-        return hour + ":" + d.getMinutes() + apm + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + (d.getYear() + 1900);
+        return hour + ":" + d.getMinute() + apm + " " + d.getMonthValue() + "/" + d.getDayOfMonth() + "/" + d.getYear();
     }
 
 }

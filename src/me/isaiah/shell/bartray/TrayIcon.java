@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+@Deprecated
 public class TrayIcon extends JLabel {
 
     private static final long serialVersionUID = 1L;

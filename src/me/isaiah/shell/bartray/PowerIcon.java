@@ -5,14 +5,16 @@ import java.awt.Graphics;
 
 import javax.swing.Timer;
 
-import me.isaiah.shell.SystemBar;
-import me.isaiah.shell.Utils;
+import com.fungus_soft.desktop.SystemBar;
+import com.fungus_soft.desktop.Utils;
 
+@Deprecated
 public class PowerIcon extends TrayIcon {
 
     private static final long serialVersionUID = 1L;
     public int left;
     public int pers;
+    public boolean hasBattery;
 
     public PowerIcon() {
         super("Power", null);
@@ -22,8 +24,9 @@ public class PowerIcon extends TrayIcon {
                 String[] txt = system(getOS() == OS.WINDOWS ? 
                         "WMIC PATH Win32_Battery Get EstimatedChargeRemaining" :
                          "upower -i $(upower -e | grep '/battery') | grep --color=never -E percentage|xargs|cut -d' ' -f2|sed s/%//", true);
-                if (txt[2].trim().length() < 1)
+                if (txt[2].trim().length() < 1) {
                     return;
+                }
                 left = Integer.valueOf(txt[2].trim());
                 pers = (left * 16) / 100;
                 setToolTipText("Battery left: " + left + "%");
@@ -31,7 +34,7 @@ public class PowerIcon extends TrayIcon {
             });
         });
         this.setForeground(Color.WHITE);
-        t.setInitialDelay(2000);
+        t.setInitialDelay(1);
         t.start();
         SystemBar.get.validate();
     }
@@ -45,6 +48,10 @@ public class PowerIcon extends TrayIcon {
         g.fillRect(getWidth() - 8, 3, 4, 7);
 
         g.fillRect(6, 2, pers + 6, getHeight() - 6);
+    }
+
+    public boolean hasBattery() {
+        return false;
     }
 
 }

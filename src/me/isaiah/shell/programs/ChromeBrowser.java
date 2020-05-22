@@ -3,46 +3,59 @@ package me.isaiah.shell.programs;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import javax.swing.JPanel;
 
 import com.codebrig.journey.JourneyBrowserView;
 
-import me.isaiah.shell.Main;
-import me.isaiah.shell.api.JProgram;
-import me.isaiah.shell.api.ProgramDownloader;
-import me.isaiah.shell.api.ProgramDownloader.DownloadAction;
-import me.isaiah.shell.api.ProgramInfo;
+import com.fungus_soft.desktop.Main;
+import com.fungus_soft.desktop.api.JProgram;
+import com.fungus_soft.desktop.api.ProgramDownloader;
+import com.fungus_soft.desktop.api.ProgramDownloader.DownloadAction;
+import com.fungus_soft.desktop.api.ProgramInfo;
 
-@ProgramInfo(name = "Web Chrome", version="1.0", authors="Google, Fungus Software", width=900, height=700)
+@ProgramInfo(name = "Web Chrome", version="1.0", authors="Fungus Software", width=900, height=700)
 public class ChromeBrowser extends JProgram {
 
     private static final long serialVersionUID = 1L;
     private ProgramDownloader dl;
     private boolean finished;
+    private URLClassLoader l;
 
     public ChromeBrowser() {
-        File f = new File(Main.pStorage.getParentFile(), "downloadedPrograms");
+        File f = new File(new File(Main.pStorage.getParentFile(), "downloadedPrograms"), "journey-browser-0.4.0.jar");
         f.getParentFile().mkdir();
+
+        dl = new ProgramDownloader("https://github.com/CodeBrig/Journey/releases/download/0.4.0-offline/journey-browser-0.4.0.jar", f.getParentFile());
         DownloadAction a = () -> {
-            JPanel pan = new JPanel(new BorderLayout());
-            JourneyBrowserView chrome = new JourneyBrowserView("https://google.com/");
-            pan.add(chrome, BorderLayout.CENTER);
-            setContentPane(pan);
-            pack();
-            setTitle("Chrome");
-            finished = true;
-            super.setVisible(true);
-            Main.p.add(this);
+            if (dl.finished) {
+                try {
+                    finished = true;
+                    ClassLoader l = new URLClassLoader(new URL[] {f.toURI().toURL()});
+                    JPanel pan = new JPanel(new BorderLayout());
+                    JourneyBrowserView chrome = (JourneyBrowserView) Class.forName("com.codebrig.journey.JourneyBrowserView", false, l).getConstructor(String.class).newInstance("https://duck.com/");
+                    pan.add(chrome, BorderLayout.CENTER);
+                    setContentPane(pan);
+                    pack();
+                    setTitle("Fungus Chromium");
+                    super.setVisible(true);
+                    Main.p.add(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         };
 
         if (f.exists()) {
+            dl.finished = true;
             a.onFinished();
         } else {
             try {
-                dl = new ProgramDownloader("https://github.com/CodeBrig/Journey/releases/download/0.4.0-online/journey-browser-0.4.0.jar", f, a);
-                Main.p.add(dl);
+                System.out.println("test");
+                this.setContentPane(dl);
+                dl.start(a, this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -53,7 +66,7 @@ public class ChromeBrowser extends JProgram {
     public void setVisible(boolean b) {
         if (!finished)
             if (dl != null) dl.setVisible(b);
-        else super.setVisible(b);
+        super.setVisible(b);
     }
 
 }

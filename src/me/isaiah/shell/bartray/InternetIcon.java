@@ -7,11 +7,12 @@ import javax.swing.Timer;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import me.isaiah.shell.Main;
-import me.isaiah.shell.SystemBar;
-import me.isaiah.shell.Utils;
-import me.isaiah.shell.api.JProgram;
+import com.fungus_soft.desktop.Main;
+import com.fungus_soft.desktop.SystemBar;
+import com.fungus_soft.desktop.Utils;
+import com.fungus_soft.desktop.api.JProgram;
 
+@Deprecated
 public class InternetIcon extends TrayIcon {
 
     private static final long serialVersionUID = 1L;
