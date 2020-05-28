@@ -19,7 +19,6 @@ import com.fungus_soft.desktop.SystemBar;
 import com.fungus_soft.desktop.theme.Theme;
 
 import jthemes.ThemeUtils;
-import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
 
 @ProgramInfo(name = "Personalization", version="1.0", authors="contributers", width=600, height=400)
@@ -64,7 +63,7 @@ public class PersonalizationPanel extends JPanel {
 
         @Override
         public String toString() {
-            return super.toString().substring(54) + ", " + Math.round((((double)getAlpha()/255) * 100)) + "% solid";
+            return ("rgb=(" + this.getRed() + "," + this.getGreen() + "," + this.getBlue()) + "), " + Math.round((((double)getAlpha()/255) * 100)) + "% solid";
         }
     }
 
@@ -124,6 +123,7 @@ public class PersonalizationPanel extends JPanel {
         p2.add(paperList);
 
         JPanel p3 = new JPanel();
+        p3.setLayout(new BoxLayout(p3, BoxLayout.Y_AXIS));
         p3.setBorder(BorderFactory.createTitledBorder("System Bar & Menu"));
         JComboBox<Color> l2 = new JComboBox<>(bar_colors);
         l2.setSelectedItem(ThemeUtils.getCurrentTheme().getClass().getName());
@@ -142,6 +142,12 @@ public class PersonalizationPanel extends JPanel {
         p3.add(l4);
         p3.add(l3);
         p3.add(l2);
+        JComboBox<?>[] boxes = {l4,l3,l2};
+        for (JComboBox<?> box : boxes) {
+            JPanel p3w = new JPanel();
+            p3w.add(box);
+            p3.add(p3w);
+        }
 
         add(p);
         add(p2);

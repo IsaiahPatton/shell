@@ -33,7 +33,7 @@ public class Main {
     public static boolean isLowMemory;
 
     public static int ram = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
-    private static String mem;
+    public static String mem;
 
     public static JFrame f = new JFrame();
     public static final ZDesktopPane p = new ZDesktopPane(f);

@@ -40,6 +40,8 @@ import com.fungus_soft.ui.ModernScrollPane;
 import com.fungus_soft.desktop.Utils.IClick;
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
+import com.fungus_soft.desktop.settings.SettingsApp;
+
 import me.isaiah.shell.programs.ChromeBrowser;
 import me.isaiah.shell.programs.WebBrowser;
 import com.fungus_soft.desktop.theme.DefaultIconPack;
@@ -171,7 +173,7 @@ public class StartMenu extends JProgram {
         addProgram(CopperBrowser.class);
         addProgram(FileExplorer.class);
         addProgram(ConsoleOutput.class);
-        addProgram(PersonalizationSettings.class);
+        addProgram(SettingsApp.class);
         addProgram(TabbedTerminal.class);
         addProgram(WebBrowser.class);
         addProgram(Notepad.class);
