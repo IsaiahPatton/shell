@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -111,6 +113,16 @@ public class FileExplorer extends JProgram {
             else if (name.endsWith(".txt") || name.endsWith(".text") || name.endsWith(".html"))
                 Main.p.add(new Notepad(file));
             else if (name.endsWith(".jar")) Main.pm.loadProgram(file, true, true);
+            else if (name.endsWith(".bat")) {
+                Terminal term = new Terminal();
+                try {
+                    for (String str : Files.readAllLines(file.toPath()))
+                        term.onCommand(str);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                term.dispose();
+            }
 
             else Main.p.add(new ProgramFileTypeOpener(file));
         }

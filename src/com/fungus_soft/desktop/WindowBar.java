@@ -16,7 +16,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class WindowBar extends JPanel {
 
@@ -34,18 +35,12 @@ public class WindowBar extends JPanel {
 
         setLayout(new GridLayout(1, 1));
 
-        list.setBackground(Color.BLACK);
+        list.setBackground(new Color(0,0,0,0));
         list.setBorder(BorderFactory.createEmptyBorder(0, 24, 0, 12));
 
         add(list);
+        this.setBackground(new Color(0,0,0,0));
         this.setOpaque(false);
-        new Timer(3000, a -> {
-            for (FrameWrapper f : wrappers.values()) {
-                if (f.frame.isClosed())
-                    removeFrame(f.frame);
-                f.repaint();
-            }
-        }).start();
     }
 
     public int getOpenCount() {
@@ -55,6 +50,11 @@ public class WindowBar extends JPanel {
     public void addFrame(final JInternalFrame frame) {
         final FrameWrapper wrapper = new FrameWrapper(frame);
         SwingUtilities.invokeLater(() -> {
+            frame.addInternalFrameListener(new InternalFrameAdapter(){
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    removeFrame(e.getInternalFrame());
+                }
+            });
             wrappers.put(frame, wrapper);
             list.add(wrapper);
             revalidate();
@@ -70,11 +70,10 @@ public class WindowBar extends JPanel {
             return;
 
         SwingUtilities.invokeLater(() -> {
+            wrapper.setSize(1, wrapper.getHeight());
             list.remove(wrapper);
             wrappers.remove(frame);
-            revalidate();
-            repaint();
-            list.repaint();
+            validate();
         });
     }
 
@@ -93,15 +92,13 @@ public class WindowBar extends JPanel {
 
         private static final long serialVersionUID = 1L;
         public final JInternalFrame frame;
-        private Color barColor;
 
         public FrameWrapper(JInternalFrame frame) {
             int size = SystemBar.get.getHeight() / 2;
             setIcon(new ImageIcon(((ImageIcon)frame.getFrameIcon()).getImage().getScaledInstance(size, size, 0)));
             this.frame = frame;
-            Color c = SystemBar.barColor;
-            this.barColor = new Color(c.getRed(), c.getGreen(), c.getBlue());
-            this.setBorder(BorderFactory.createMatteBorder(12, 12, 12, 12, barColor));
+            this.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
+            this.setOpaque(false);
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -109,7 +106,7 @@ public class WindowBar extends JPanel {
                 }
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    setBorder(BorderFactory.createMatteBorder(12, 12, 12, 12, barColor));
+                    setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
                 }
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -127,16 +124,6 @@ public class WindowBar extends JPanel {
                 g.setColor(Color.LIGHT_GRAY);
                 g.fillRect(0, getHeight() - 3, getWidth(), 3);
             }
-            if (!colorEqual(barColor, SystemBar.barColor)) {
-                Color c = SystemBar.barColor;
-                this.barColor = new Color(c.getRed(), c.getGreen(), c.getBlue());
-                setBorder(BorderFactory.createMatteBorder(12, 12, 12, 12, barColor));
-            }
-            repaint();
-        }
-
-        private boolean colorEqual(Color a, Color b) {
-            return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();
         }
 
         public final JInternalFrame getFrame() {

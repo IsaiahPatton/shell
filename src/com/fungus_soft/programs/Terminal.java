@@ -26,7 +26,7 @@ import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
 import com.fungus_soft.desktop.api.Toast;
 
-@ProgramInfo(name = "Command Prompt")
+@ProgramInfo(name = "Command Prompt", width=800, height=450)
 public class Terminal extends JProgram {
 
     private static final long serialVersionUID = 1L;
@@ -142,8 +142,17 @@ public class Terminal extends JProgram {
                 else setTitle(command.substring("title ".length()));
 
                 break;
-            case "run":
+            case "sys":
                 system(command.substring(3).trim().split(" "), false);
+                break;
+            case "run":
+                try {
+                    Class<?> str = Class.forName(command.substring(3).trim());
+                    ProgramInfo i = str.getAnnotation(ProgramInfo.class);
+                    Main.p.add((JProgram)str.newInstance(), i.width(), i.height());
+                } catch (Exception e) {
+                    add("Could not run JProgram: " + e.getMessage(), Color.RED);
+                }
                 break;
             case "threads":
                 add("Thread Name | State | ID", Color.CYAN);
@@ -171,16 +180,18 @@ public class Terminal extends JProgram {
                 break;
             case "help":
                 add("===== Help =====", Color.CYAN);
-                add("HELP       Display this message");
-                add("VERSION    Prints system version");
-                add("JAVA       Java Runtime command");
-                add("DIR        Prints current dir");
-                add("ECHO       Prints text");
-                add("SYSTEM     Prints system propertites");
-                add("CLS        Clears the screen");
-                add("TITlE      Changes the title");
-                add("RUN        Run a outside program");
-                add("THREADS    Show simple info about all Threads");
+                add("HELP\tDisplay this message");
+                add("VERSION\tPrints system version");
+                add("JAVA\tJava Runtime command");
+                add("DIR\tPrints current dir");
+                add("ECHO\tPrints text");
+                add("SYSTEM\tPrint system propertites");
+                add("CLS\tClears the screen");
+                add("TITlE\tChange the terminal title");
+                add("SYS\tRun a outside program");
+                add("RUN\tStart an instance of JProgram by classname");
+                add("THREADS\tShow simple info about all Threads");
+                add("CD\tChange current directory");
                 break;
             default:
                 add("Unknown command: " + args[0], Color.RED);

@@ -3,6 +3,7 @@ package com.fungus_soft.desktop.api;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -12,6 +13,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import jthemes.StyledJInternalFrame;
 import com.fungus_soft.desktop.Main;
 import com.fungus_soft.desktop.SystemBar;
+import com.fungus_soft.desktop.theme.IconPack;
 
 /**
  * API class for Program developers
@@ -51,6 +53,14 @@ public class JProgram extends StyledJInternalFrame {
             this.setMaximumSize(new Dimension((int)this.getMaximumSize().getWidth(), (int)this.getMaximumSize().getHeight() - SystemBar.get.getHeight()));
             this.setMaximizedBounds(new Rectangle((int)this.getMaximumSize().getWidth(), (int)this.getMaximumSize().getHeight() - SystemBar.get.getHeight()));
         }
+        try {
+            Icon icon = IconPack.getIcon("res/icons/menu/" + getClass().getName() + ".png", false);
+            if (icon == null)
+                icon = IconPack.get().blank;
+            this.setFrameIcon(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Dimension oldSize;
@@ -71,8 +81,8 @@ public class JProgram extends StyledJInternalFrame {
         this.setSize(new Dimension(Main.p.getWidth(), Main.p.getHeight() - SystemBar.get.getHeight()));
     }
 
-    @Override
-    public void setFrameIcon(Icon icon) {
+    //Override
+    public void setFrsameIcon(Icon icon) {
         if (icon == null || !(icon instanceof ImageIcon)) return;
 
         super.setFrameIcon(new ImageIcon( ((ImageIcon) icon).getImage().getScaledInstance(16, 16, 0) ));

@@ -108,7 +108,7 @@ public class StartMenu extends JProgram {
 
     public void effect() {
         int h = Main.p.getHeight() - SystemBar.get.getHeight();
-        new Thread(() -> {
+        Utils.runAsync(() -> {
             boolean b = false;
             for (int i = h; i >= (h - getHeight()); i--) {
                 setLocation(0, i--);
@@ -118,7 +118,7 @@ public class StartMenu extends JProgram {
                 } catch (InterruptedException e1) { e1.printStackTrace(); }
                 validate();
             }
-        }).start();
+        });
 
         setSize(this.getPreferredSize());
         validate();
@@ -126,11 +126,12 @@ public class StartMenu extends JProgram {
 
     public static Color background = Color.BLACK;
     public static Color pBackground = new Color(15, 15, 15, 250);
-    public static Color tilesBackground = new Color(0, 0, 0, 200);
+    public static Color tilesBackground = new Color(60, 60, 60);
     public static Color letBackground = new Color(25, 25, 25, 250);
     public static Color borderBackground = new Color(20, 20, 20);
 
     public static void setColors(Color bg, Color pBg, Color tiles, Color lets, Color border) {
+        System.out.println(Color.DARK_GRAY);
         background = bg;
         pBackground = pBg;
         tilesBackground = tiles;
@@ -235,10 +236,9 @@ public class StartMenu extends JProgram {
             let.setBorder(BorderFactory.createTitledBorder(new EmptyBorder(4,2,16,2), s.toUpperCase()));
             ((TitledBorder)let.getBorder()).setTitleColor(Color.WHITE);
             for (Class<? extends JProgram> str : nameMap.get(s)) {
-                String name = str.getAnnotation(ProgramInfo.class).name();
-                JLabel l = (JLabel)let.add(new JLabel(name));
+                JLabel l = (JLabel)let.add(new JLabel(str.getAnnotation(ProgramInfo.class).name()));
                 try {
-                    ImageIcon icon = IconPack.getIcon("res/icons/menu/" + name.replace(" ", "-") + ".png", false);
+                    ImageIcon icon = IconPack.getIcon("res/icons/menu/" + str.getName() + ".png", false);
                     if (icon == null)
                         icon = IconPack.get().blank;
                     l.setIcon(IconPack.scale(icon, 20, 20));
@@ -261,7 +261,7 @@ public class StartMenu extends JProgram {
             sort.add(let);
         }
         JScrollPane sp = new ModernScrollPane(sort, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        sp.setMaximumSize(new Dimension(228,500));
+        sp.setMaximumSize(new Dimension(228,Integer.MAX_VALUE));
 
         JPanel b = new JPanel();
         b.setOpaque(false);
@@ -307,7 +307,7 @@ public class StartMenu extends JProgram {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            g.setColor(Color.DARK_GRAY);
+            g.setColor(tilesBackground);
             g.fillRect(0, 0, getWidth(), getWidth());
             g.drawImage(i, (this.getWidth() - 32) / 2, (this.getHeight() - 32) / 2, 32, 32, null);
             g.setColor(Color.WHITE);

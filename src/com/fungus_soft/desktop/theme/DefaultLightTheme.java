@@ -10,18 +10,20 @@ import com.fungus_soft.desktop.StartMenu;
 import com.fungus_soft.desktop.SystemBar;
 import com.fungus_soft.desktop.api.Toast;
 
-public class DefaultTheme extends Theme {
+public class DefaultLightTheme extends Theme {
 
     @Override
     public void apply() {
+        Color WHITE = new Color(220,220,220);
+
         ThemeUtils.setCurrentTheme(new ModernTheme());
         IconPack.setIconPack(new DefaultIconPack());
         SystemBar.setSized(new Dimension(Main.p.getWidth(), 48));
-        SystemBar.setPanelBackground(new Color(0,0,0,250));
-        SystemBar.setButtonBackground(Color.BLACK);
-        StartMenu.setColors(Color.BLACK, new Color(15,15,15,250), new Color(60,60,60), new Color(25,25,25, 250), new Color(20,20,20));
-        Toast.BACKGROUND = Color.BLACK;
-        Toast.FOREGROUND = Color.WHITE;
+        SystemBar.setPanelBackground(new Color(220,220,220,230));
+        SystemBar.setButtonBackground(WHITE);
+        StartMenu.setColors(Color.BLACK, new Color(215,215,215,250), new Color(200,200,200, 200), new Color(225,225,225, 250), new Color(220,220,220));
+        Toast.BACKGROUND = Color.WHITE;
+        Toast.FOREGROUND = Color.BLACK;
     }
 
 }

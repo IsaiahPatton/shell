@@ -1,4 +1,4 @@
-package me.isaiah.shell.bartray;
+package com.fungus_soft.desktop.bartray;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,35 +21,22 @@ public class InternetIcon extends TrayIcon {
         super(null, "wifi.png");
 
         this.addMouseListener(Utils.click(e -> {
-            String[] txt = system("netsh wlan show interfaces", true);
-
-            String ssid = "Not Connected";
-            int progress = 0;
-
-            for (String str : txt) {
-                str = str.trim();
-                if (!str.contains(":")) continue;
-
-                String after = str.substring(str.indexOf(":") + 1).trim();
-                if (str.startsWith("SSID")) ssid = after;
-
-                if (str.startsWith("Signal"))
-                    progress = Integer.valueOf(after.replace("%", ""));
-            }
 
             JProgressBar pb = new JProgressBar();
-            pb.setValue(progress);
             pb.setStringPainted(true);
 
             JPanel z = new JPanel();
-            JLabel l = new JLabel(ssid);
+            JLabel l = new JLabel("");
             z.add(l);
             z.add(pb);
 
+            refresh(pb,l);
             Timer t = new Timer(2000, a -> refresh(pb, l));
             t.start();
 
             JProgram p = new JProgram("Network");
+            p.setMaximizable(false);
+            p.setIconifiable(false);
             p.setVisible(true);
             p.setContentPane(z);
             p.addInternalFrameListener(new InternalFrameAdapter(){

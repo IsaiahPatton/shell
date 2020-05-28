@@ -1,4 +1,4 @@
-package me.isaiah.shell.bartray;
+package com.fungus_soft.desktop.bartray;
 
 import java.io.BufferedReader;
 import java.io.IOException;

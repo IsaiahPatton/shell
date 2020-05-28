@@ -4,24 +4,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import jthemes.ThemeUtils;
-import jthemes.themes.ModernTheme;
+import jthemes.themes.DarkTheme;
 import com.fungus_soft.desktop.Main;
 import com.fungus_soft.desktop.StartMenu;
 import com.fungus_soft.desktop.SystemBar;
 import com.fungus_soft.desktop.api.Toast;
 
-public class DefaultTheme extends Theme {
+public class BlackTheme extends Theme {
 
     @Override
     public void apply() {
-        ThemeUtils.setCurrentTheme(new ModernTheme());
+        ThemeUtils.setCurrentTheme(new DarkTheme());
         IconPack.setIconPack(new DefaultIconPack());
         SystemBar.setSized(new Dimension(Main.p.getWidth(), 48));
-        SystemBar.setPanelBackground(new Color(0,0,0,250));
+        SystemBar.setPanelBackground(Color.BLACK);
         SystemBar.setButtonBackground(Color.BLACK);
-        StartMenu.setColors(Color.BLACK, new Color(15,15,15,250), new Color(60,60,60), new Color(25,25,25, 250), new Color(20,20,20));
+        StartMenu.setColors(Color.BLACK, Color.BLACK, new Color(8,8,8), Color.BLACK, Color.BLACK);
         Toast.BACKGROUND = Color.BLACK;
-        Toast.FOREGROUND = Color.WHITE;
+        Toast.FOREGROUND = Color.LIGHT_GRAY;
     }
 
 }

@@ -28,6 +28,8 @@ public class ConsoleOutput extends JProgram {
 
     public static void init() {
         i = new JTextPane();
+        i.setBackground(Color.BLACK);
+        i.setEditable(false);
 
         PrintStream m = System.out;
         StyledDocument d = i.getStyledDocument();

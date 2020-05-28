@@ -14,9 +14,9 @@ public class BlueTheme extends Theme {
     public void apply() {
         ThemeUtils.setCurrentTheme(new ModernLunaTheme());
         IconPack.setIconPack(new DefaultIconPack());
-        SystemBar.setPanelBackground(new Color(0, 90, 205));
+        SystemBar.setPanelBackground(new Color(0, 60, 200, 240));
         SystemBar.setButtonBackground(new Color(0, 153, 51));
-        StartMenu.setColors(Color.BLACK, new Color(165, 208, 222), new Color(0,0,0, 200), new Color(25,25,25, 250), new Color(0, 75, 190));
+        StartMenu.setColors(Color.BLACK, new Color(165, 208, 222, 240), new Color(0,75,190, 200), new Color(115,25,25, 250), new Color(0, 75, 190));
         Toast.BACKGROUND = new Color(50, 120, 255);
         Toast.FOREGROUND = Color.WHITE;
     }

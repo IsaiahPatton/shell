@@ -17,7 +17,7 @@ import com.fungus_soft.desktop.Main;
 
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
-import me.isaiah.shell.bartray.TaskBarTray;
+import com.fungus_soft.desktop.bartray.TaskBarTray;
 
 @ProgramInfo(name = "SystemBar", version = "1")
 public class SystemBar extends JProgram {

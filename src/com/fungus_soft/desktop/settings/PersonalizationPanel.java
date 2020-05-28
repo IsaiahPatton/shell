@@ -1,4 +1,4 @@
-package com.fungus_soft.programs;
+package com.fungus_soft.desktop.settings;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -22,8 +22,8 @@ import jthemes.ThemeUtils;
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
 
-@ProgramInfo(name = "Themes", version="1.0", authors="contributers", width=600, height=400)
-public class PersonalizationSettings extends JProgram {
+@ProgramInfo(name = "Personalization", version="1.0", authors="contributers", width=600, height=400)
+public class PersonalizationPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,11 +68,9 @@ public class PersonalizationSettings extends JProgram {
         }
     }
 
-    public PersonalizationSettings() {
-        super("Personalization");
+    public PersonalizationPanel() {
         JPanel p = new JPanel();
-        JPanel all = new JPanel();
-        all.setLayout(new BoxLayout(all, BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JComboBox<String> petList = new JComboBox<>();
         for (String s : themes)
@@ -145,19 +143,9 @@ public class PersonalizationSettings extends JProgram {
         p3.add(l3);
         p3.add(l2);
 
-        //p3.setVisible(false);
-
-        //JButton advancedSettings = new JButton("Advanced Settings");
-        //advancedSettings.addActionListener(a -> {
-        //    p3.setVisible(!p3.isVisible());
-        //    advancedSettings.setVisible(false);
-        //});
-
-        all.add(p);
-        all.add(p2);
-        //all.add(advancedSettings);
-        all.add(p3);
-        this.setContentPane(all);
+        add(p);
+        add(p2);
+        add(p3);
     }
 
     public String[] system(String args, boolean block) {
