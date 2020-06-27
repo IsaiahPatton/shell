@@ -37,9 +37,9 @@ public class Desktop {
             ic.setOpaque(false);
             ic.setName("DESKTOP_ICON");
 
-            if (y > (p.getHeight() - 130) && p.getHeight() > 2) {
-                y = 16;
-                x = x + 75;
+            if (y > (Main.f.getHeight() - 120) && Main.f.getHeight() > 2) {
+                y = 18;
+                x = x + 80;
             }
 
             ic.setLocation(x, y);
@@ -62,7 +62,7 @@ public class Desktop {
             ic.setBorder(null);
             ic.setVisible(true);
             ic.pack();
-            y += ic.getHeight() + 24;
+            y += ic.getHeight() + 28;
 
             p.setComponentZOrder(p.add(ic), 0);
             if (p.getPosition(ic) > 0)

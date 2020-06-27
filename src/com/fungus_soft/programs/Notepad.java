@@ -2,9 +2,11 @@ package com.fungus_soft.programs;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import com.fungus_soft.desktop.Main;
+import com.fungus_soft.desktop.Utils;
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.JWebApp;
 import com.fungus_soft.desktop.api.ProgramInfo;
@@ -34,28 +37,32 @@ public class Notepad extends JProgram {
         this.setFrameIcon(IconPack.get().text);
         this.file = fil;
         String text = "";
-        int i = 0;
+        JTextArea a = new JTextArea(text);
 
         if (file != null && file.exists()) {
+            int i = 0;
             try {
+                long start = System.currentTimeMillis();
                 for (String s : Files.readAllLines(file.toPath())) {
-                    if (i == 1) text += "\n" + s;
+                    if (i == 1) a.append("\n" + s);
                     if (i == 0) {
-                        text += s;
+                        a.append(s);
                         i++;
                     }
                 }
+                long end = System.currentTimeMillis();
+                System.out.println("Loaded text file \"" + file.getName() + "\" in " + (end - start) + "ms");
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
 
         JPanel pa = new JPanel();
-        JTextArea a = new JTextArea(text);
         a.setMargin(new Insets(5, 8, 5, 8));
         pa.setLayout(new BoxLayout(pa, BoxLayout.Y_AXIS));
         a.setWrapStyleWord(true);
         a.setSize(200, 300);
+        a.setCaretPosition(0);
         JMenuBar m = new JMenuBar();
         JMenu mf = new JMenu("File");
         mf.add("Save").addActionListener(l -> {

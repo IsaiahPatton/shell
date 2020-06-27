@@ -12,10 +12,9 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileSystemView;
 
-import com.fungus_soft.desktop.Utils;
-import com.fungus_soft.programs.FileExplorer;
 import com.fungus_soft.desktop.theme.DefaultIconPack;
 import com.fungus_soft.desktop.theme.IconPack;
+import com.fungus_soft.programs.FileExplorer;
 import com.fungus_soft.ui.OutlineLabel;
 
 public class Icon extends OutlineLabel {

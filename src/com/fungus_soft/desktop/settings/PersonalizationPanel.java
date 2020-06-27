@@ -38,6 +38,7 @@ public class PersonalizationPanel extends JPanel {
             "Material Background (1080p) : a.jpg",
             "Yellow Shapes (1080p) : material-design-1920x1200-stock-yellow-shapes-material-hd-14202.jpg",
             "Green Hill (1080p): hill-meadow-tree-green-1920x1080.jpg",
+            "Sky (720p) : sky.jpg",
             "Blank",
             "Provided by Windows"
     };
