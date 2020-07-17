@@ -93,14 +93,15 @@ public class Mines extends JProgram {
                     }
                     if (btn.getName().equalsIgnoreCase("safe")) {
                         ArrayList<JButton> btns = new ArrayList<>();
-                        btns.add(map.getOrDefault(new Point(xF-1, yF-1), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF, yF-1), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF+1, yF-1), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF-1, yF), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF+1, yF), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF-1, yF+1), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF, yF+1), new JButton()));
-                        btns.add(map.getOrDefault(new Point(xF+1, yF+1), new JButton()));
+                        JButton temp = new JButton();
+                        btns.add(map.getOrDefault(new Point(xF-1, yF-1), temp));
+                        btns.add(map.getOrDefault(new Point(xF, yF-1), temp));
+                        btns.add(map.getOrDefault(new Point(xF+1, yF-1), temp));
+                        btns.add(map.getOrDefault(new Point(xF-1, yF), temp));
+                        btns.add(map.getOrDefault(new Point(xF+1, yF), temp));
+                        btns.add(map.getOrDefault(new Point(xF-1, yF+1), temp));
+                        btns.add(map.getOrDefault(new Point(xF, yF+1), temp));
+                        btns.add(map.getOrDefault(new Point(xF+1, yF+1), temp));
                         int mines = 0;
                         for (JButton b : btns)
                             if (b.getName() != null && b.getName().equalsIgnoreCase("*"))

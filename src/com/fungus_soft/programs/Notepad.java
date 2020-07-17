@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.stream.Stream;
 
 import javax.swing.BoxLayout;
 import javax.swing.JMenu;
@@ -32,29 +33,47 @@ public class Notepad extends JProgram {
 
     private static final long serialVersionUID = 1L;
     private File file;
+    private int i;
+    private int line;
 
     public Notepad(File fil) {
         this.setFrameIcon(IconPack.get().text);
         this.file = fil;
         String text = "";
         JTextArea a = new JTextArea(text);
+        i = 0;
+        line = 0;
 
         if (file != null && file.exists()) {
-            int i = 0;
-            try {
-                long start = System.currentTimeMillis();
-                for (String s : Files.readAllLines(file.toPath())) {
-                    if (i == 1) a.append("\n" + s);
-                    if (i == 0) {
-                        a.append(s);
+            Utils.runAsync(() -> {
+                try {
+                    long start = System.currentTimeMillis();
+                    Stream<String> stream = Files.lines(file.toPath());
+                    stream.forEach(s -> {
+                        if (i >= 1) a.append("\n" + s);
+                        if (i == 0) {
+                            a.append(s);
+                        }
                         i++;
-                    }
+                        if (i > 200) {
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            i = 1;
+                            this.repaint();
+                        }
+                        this.setTitle("Notepad - Loading " + file.getName() + ", Line: " + ++line);
+                    });
+                    long end = System.currentTimeMillis();
+                    System.out.println("Loaded text file \"" + file.getName() + "\" in " + (end - start) + "ms");
+                    this.setTitle("Notepad - " + file.getName());
+                    this.repaint();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-                long end = System.currentTimeMillis();
-                System.out.println("Loaded text file \"" + file.getName() + "\" in " + (end - start) + "ms");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            });
         }
 
         JPanel pa = new JPanel();
