@@ -1,7 +1,7 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.isaiah</groupId>
-    <artifactId>DesktopEnvirement</artifactId>
+    <artifactId>DesktopEnvironment</artifactId>
     <version>indev</version>
         
     <properties>
@@ -64,6 +64,10 @@
 		<id>jitpack.io</id>
 		<url>https://jitpack.io</url>
 	</repository>
+    <repository>
+        <id>fungus</id>
+        <url>https://isaiah.fungus-soft.com/maven-repo/</url>
+    </repository>
     </repositories>
 
     <dependencies>
@@ -91,7 +95,7 @@
         <dependency>
             <groupId>com.fungus-soft</groupId>
             <artifactId>ZunoZap</artifactId>
-            <version>0.8.0</version>
+            <version>0.9.0</version>
             <scope>compile</scope>
         </dependency>
 

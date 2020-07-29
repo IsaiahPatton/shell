@@ -35,6 +35,7 @@ import javax.swing.event.InternalFrameEvent;
 
 import com.fungus_soft.desktop.Main;
 import com.fungus_soft.programs.*;
+import com.fungus_soft.programs.zunozap.ZunoZapFx;
 import com.fungus_soft.ui.ModernScrollPane;
 
 import com.fungus_soft.desktop.Utils.IClick;
@@ -175,12 +176,13 @@ public class StartMenu extends JProgram {
         addProgram(ConsoleOutput.class);
         addProgram(SettingsApp.class);
         addProgram(TabbedTerminal.class);
-        addProgram(WebBrowser.class);
+        //addProgram(WebBrowser.class);
         addProgram(Notepad.class);
         addProgram(Calculator.class);
         addProgram(Mines.class);
         addProgram(WebViewBrowser.class);
-        addProgram(ChromeBrowser.class);
+        //addProgram(ChromeBrowser.class);
+        addProgram(ZunoZapFx.class);
 
         this.setOpaque(false);
         tiles = new JPanel() {
@@ -273,7 +275,7 @@ public class StartMenu extends JProgram {
         a.add(tiles);
         a.setOpaque(false);
         b.add(a);
-        tiles.setMaximumSize(new Dimension(512, 900));
+        tiles.setMaximumSize(new Dimension(512, Integer.MAX_VALUE));
         p.add(b, BorderLayout.CENTER);
         p.add(ba, BorderLayout.SOUTH);
         ba.setBackground(borderBackground);

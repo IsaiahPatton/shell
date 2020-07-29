@@ -13,7 +13,8 @@ public abstract class Theme {
     public static void setCurrentTheme(Theme theme) {
         if (def == null) def = new DefaultTheme();
         current = theme;
-        def.apply();
+        if (def != current)
+            def.apply();
         current.apply();
     }
 

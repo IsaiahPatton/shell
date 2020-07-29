@@ -51,11 +51,11 @@ public class Notepad extends JProgram {
                     Stream<String> stream = Files.lines(file.toPath());
                     stream.forEach(s -> {
                         if (i >= 1) a.append("\n" + s);
-                        if (i == 0) {
+                        if (i == 0)
                             a.append(s);
-                        }
+
                         i++;
-                        if (i > 200) {
+                        if (i > 300) {
                             try {
                                 Thread.sleep(300);
                             } catch (InterruptedException e) {
@@ -70,6 +70,7 @@ public class Notepad extends JProgram {
                     System.out.println("Loaded text file \"" + file.getName() + "\" in " + (end - start) + "ms");
                     this.setTitle("Notepad - " + file.getName());
                     this.repaint();
+                    stream.close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

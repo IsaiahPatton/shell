@@ -28,7 +28,7 @@ import com.fungus_soft.desktop.api.loader.JProgramManager;
 public class Main {
 
     public static final String NAME = "Fungus Desktop Environment";
-    public static final String VERSION = "2020.5-dev";
+    public static final String VERSION = "2020.7-dev";
 
     public static boolean isLowMemory;
 
@@ -60,7 +60,7 @@ public class Main {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         ConsoleOutput.init();
-        System.setProperty("sun.java2d.opengl", "true");
+        //System.setProperty("sun.java2d.opengl", "true");
         isLowMemory = ram <= 128;
 
         double m = ram;
@@ -79,7 +79,7 @@ public class Main {
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 pr = (ArrayList<String>) ois.readObject();
                 ois.close();
-            } catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+            } catch (IOException | ClassNotFoundException e){e.printStackTrace();}
         }
 
         pm = new JProgramManager();
@@ -106,7 +106,7 @@ public class Main {
                     g.drawString("LOW MEMORY MODE [" + mem + "]", (getWidth() / 2) - 70, getHeight() / 2);
 
                 g.setColor(Color.GRAY);
-                g.drawString(NAME + " version " + VERSION, getWidth() - 260, 20);
+                g.drawString(NAME + " version " + VERSION, getWidth() - 268, 20);
                 g.drawString("Java Verison: " + Utils.getJavaVersion().substring(0, Utils.getJavaVersion().indexOf("&")), getWidth() - 255, 36);
                 g.drawString("JVM Memory: " + mem, getWidth() - 145, 36);
             }
@@ -128,7 +128,6 @@ public class Main {
         setDefaultBackground(base);
 
         Theme.setCurrentTheme(new DefaultTheme());
-        f.validate();
     }
 
     public static void setDefaultBackground(JPanel base) {

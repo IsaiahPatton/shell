@@ -3,7 +3,6 @@ package com.fungus_soft.desktop.settings;
 import java.awt.BorderLayout;
 
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 

@@ -1,14 +1,19 @@
 package com.fungus_soft.desktop.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
@@ -23,28 +28,35 @@ public class SettingsApp extends JProgram {
 
     private static final long serialVersionUID = 1L;
     private Class<?>[] panels;
+    private JLabel title;
 
     public SettingsApp() {
         this.panels = new Class<?>[] {PersonalizationPanel.class, NetworkPanel.class, AboutPanel.class};
         JPanel all = new JPanel(new BorderLayout());
         JPanel p = new JPanel();
         WindowPane wp = this.getTitleBar();
-        JButton back = new ModernButton("<- Back to All Settings");
-        back.setVisible(false);
+        JButton back = new ModernButton("<");
+        super.setTitle("");
+        title = new JLabel("Settings");
+
         back.addActionListener(l -> {
             all.getComponents()[0].setName("close");
             all.removeAll();
             all.add(p, BorderLayout.CENTER);
-            back.setVisible(false);
             validate();
+            repaint();
         });
 
         JPanel bp = new JPanel();
         bp.setOpaque(false);
         bp.add(back);
+        bp.add(title);
+        title.setForeground(Color.LIGHT_GRAY);
+        back.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED), new EmptyBorder(3,8,3,8)));
+        back.setBackground(new Color(50,50,50));
+        back.setForeground(Color.LIGHT_GRAY);
 
-        wp.add(bp, BorderLayout.CENTER);
-        wp.add(Box.createHorizontalStrut(16), BorderLayout.WEST);
+        wp.add(bp, BorderLayout.WEST);
 
         for (Class<?> pan : panels) {
             ModernButton btn = new ModernButton(pan.getAnnotation(ProgramInfo.class).name());
@@ -55,7 +67,6 @@ public class SettingsApp extends JProgram {
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                back.setVisible(true);
                 validate();
             });
             btn.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -73,6 +84,12 @@ public class SettingsApp extends JProgram {
         }
         all.add(p, BorderLayout.CENTER);
         this.setContentPane(new ModernScrollPane(all));
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle("");
+        if (this.title != null) this.title.setText(title);
     }
 
 }

@@ -12,11 +12,12 @@ import javax.swing.JTabbedPane;
 
 import org.sexydock.tabs.jhrome.JhromeTabbedPaneUI;
 
-import jthemes.ThemeUtils;
-import jthemes.WindowPane.WindowControl;
 import com.fungus_soft.desktop.Utils;
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
+
+import jthemes.ThemeUtils;
+import jthemes.WindowPane.WindowControl;
 
 @ProgramInfo(name = "Command Prompt", width=800, height=450)
 public class TabbedTerminal extends JProgram {
@@ -75,8 +76,7 @@ public class TabbedTerminal extends JProgram {
         tb.addMouseListener(this.getTitleBar().getMouseListeners()[0]);
         tb.addMouseMotionListener(this.getTitleBar().getMouseMotionListeners()[0]);
 
-        for (WindowControl w : this.getTitleBar().getWindowControls())
-            controls.add(w);
+        for (WindowControl w : this.getTitleBar().getWindowControls()) controls.add(w);
         getTitleBar().setVisible(false);
 
         controls.setVisible(true);

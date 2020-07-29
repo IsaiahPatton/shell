@@ -1,5 +1,7 @@
 package com.fungus_soft.desktop.api;
 
+import java.beans.PropertyVetoException;
+
 import javax.swing.SwingUtilities;
 
 import javafx.application.Platform;
@@ -16,6 +18,7 @@ public class JFXProgram extends JProgram {
     public JFXProgram(String title) {
         super(title);
         e = new JFXPanel();
+        runOnFXThread(() -> Platform.setImplicitExit(false)); // Fixes JFXPanel Bug
 
         this.setFrameIcon(IconPack.get().fxprogram);
 
@@ -42,6 +45,22 @@ public class JFXProgram extends JProgram {
         if (Platform.isFxApplicationThread())
             r.run();
         else Platform.runLater(r);
+    }
+
+    /**
+     * Fixes JFXPanel NPE bug
+     */
+    @Override
+    public void dispose() {
+        try {
+            super.dispose();
+        } catch (NullPointerException e) {
+            try {
+                this.setClosed(true);
+            } catch (PropertyVetoException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 
 }
