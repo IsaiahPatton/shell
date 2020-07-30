@@ -45,20 +45,22 @@ public class ProgramDownloader extends JComponent {
         targetDir.mkdirs();
     } 
 
-    public void start(DownloadAction a, JProgram pro) throws IOException {
-        //super("Program Update", false, false, false);
-        this.a = a;
-        //this.finished = false;
-        //targetDir.mkdirs();
+    @ProgramInfo()
+    public class PDP extends JProgram {
+        
+    }
 
-        //Utils.runAsync(() -> {
-            try {
-                d = new Download(new URL(url), targetDir);
-            } catch (MalformedURLException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        //});
+    public void start(DownloadAction a) throws IOException {
+        this.a = a;
+        this.finished = false;
+
+        try {
+            d = new Download(new URL(url), targetDir);
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        }
+
+        JProgram pro = new PDP();
         pro.setVisible(false);
 
         JProgressBar pb = new JProgressBar(0, 150);
@@ -81,13 +83,11 @@ public class ProgramDownloader extends JComponent {
                 g.drawString(str, (getWidth() / 2) - (3 * str.length()), getHeight() - 15);
             }
         };
-        z.setFont(new Font("Dialog", Font.BOLD, 48));
+        z.setFont(new Font("Dialog", Font.BOLD, 32));
         z.setForeground(Color.WHITE);
         z.setBackground(Color.BLACK);
         z.setOpaque(true);
         z.setBorder(new EmptyBorder(30,65,30,65));
-        //z.setOpaque(false);
-        //this.setUndecorated(true);
         this.setOpaque(true);
         this.setBackground(Color.BLACK);
 
@@ -97,9 +97,9 @@ public class ProgramDownloader extends JComponent {
             z.repaint();
             pro.setSize(350, 220);
             pro.setClosable(false);
-            pro.setUndecorated(true);
 
             if (d.getStatus() == 2 && i == 0) {
+                System.out.println("TEST!!!");
                 i = 1;
                 t.cancel();
                 pro.setTitle(title);
@@ -109,13 +109,12 @@ public class ProgramDownloader extends JComponent {
             }
         }}, 20, 500);}).start();
 
-        //this.setContentPane(z);
-        //this.pack();
         Dimension p = Main.p.getSize();
         pro.setContentPane(z);
         pro.setSize(350, 220);
-        pro.setLocation(p.width/2 - getWidth()/2, (p.height/2 - getHeight()/2) - SystemBar.get.getHeight());
+        pro.setLocation((p.width/2 - getWidth()/2) - (350/2), (p.height/2 - getHeight()/2) - SystemBar.get.getHeight() - (220/2));
         pro.setVisible(true);
+        Main.p.add(pro);
     }
 
     public interface DownloadAction {

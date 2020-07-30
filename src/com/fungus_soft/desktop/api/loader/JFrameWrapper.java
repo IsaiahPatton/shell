@@ -14,7 +14,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
+import com.fungus_soft.desktop.Main;
+import com.fungus_soft.desktop.StartMenu;
 import com.fungus_soft.desktop.api.JProgram;
+import com.fungus_soft.desktop.api.ProgramInfo;
+import com.fungus_soft.desktop.api.Toast;
 
 public class JFrameWrapper extends JFrame {
 
@@ -23,6 +27,11 @@ public class JFrameWrapper extends JFrame {
 
     public JFrameWrapper() {
         this.jp = new JProgram();
+    }
+
+    public void checkNull() {
+        if (null == this.jp)
+            this.jp = new JProgram();
     }
 
     public JFrameWrapper(String title) {
@@ -35,6 +44,7 @@ public class JFrameWrapper extends JFrame {
 
     @Override
     public void setTitle(String title) {
+        checkNull();
         jp.setTitle(title);
     }
 
@@ -120,25 +130,35 @@ public class JFrameWrapper extends JFrame {
 
     @Override
     public JMenuBar getJMenuBar() {
+        checkNull();
         return jp.getJMenuBar();
     }
 
     @Override
     public JRootPane getRootPane() {
+        checkNull();
         return jp.getRootPane();
     }
 
     @Override
     public Container getContentPane() {
-        if (jp.getContentPane() == null) {
+        if (jp.getContentPane() == null)
             setContentPane(new JPanel());
-        }
         return jp.getContentPane();
     }
 
     @Override
     public void setVisible(boolean b) {
         jp.setVisible(b);
+
+        ProgramInfo i = jp.getClass().getAnnotation(ProgramInfo.class);
+        ProgramInfo info = i == null ? info = JProgram.class.getAnnotation(ProgramInfo.class) : i;
+
+        if (b) {
+            jp.setVisible(true);
+            jp.setSize(info.width(), info.height());
+            Main.p.add(jp);
+        }
     }
 
 }

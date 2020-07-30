@@ -180,9 +180,10 @@ public class StartMenu extends JProgram {
         addProgram(Notepad.class);
         addProgram(Calculator.class);
         addProgram(Mines.class);
-        addProgram(WebViewBrowser.class);
+        //addProgram(WebViewBrowser.class);
         //addProgram(ChromeBrowser.class);
         addProgram(ZunoZapFx.class);
+        addProgram(Store.class);
 
         this.setOpaque(false);
         tiles = new JPanel() {
@@ -210,7 +211,7 @@ public class StartMenu extends JProgram {
         ((Tile)tiles.add(new Tile("pc", "My PC"))).onClick(l -> Main.p.add(new FileExplorer(mainDir_final)));
         ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.p.add(new FileExplorer(mainDir_final)));
         ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calculator(), 245, 330));
-        ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new WebBrowser(), 1200, 800));
+        ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new ZunoZapFx(), 1200, 800));
 
         JMenu me = new JMenu(System.getProperty("user.name"));
         me.setForeground(Color.white);

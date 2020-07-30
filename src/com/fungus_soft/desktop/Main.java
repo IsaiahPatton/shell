@@ -44,6 +44,7 @@ public class Main {
 
     public static ArrayList<String> pr = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
+
         @Override public boolean add(String z) {
             boolean b = super.add(z);
             FileOutputStream fos;
@@ -128,6 +129,12 @@ public class Main {
         setDefaultBackground(base);
 
         Theme.setCurrentTheme(new DefaultTheme());
+    }
+
+    public static boolean isInstalled(String name) {
+        if (name.equalsIgnoreCase("ZunoZap Browser")) return true; // included
+
+        return pr.contains(name);
     }
 
     public static void setDefaultBackground(JPanel base) {

@@ -55,7 +55,7 @@ public class ChromeBrowser extends JProgram {
             try {
                 System.out.println("test");
                 this.setContentPane(dl);
-                dl.start(a, this);
+                dl.start(a);
             } catch (IOException e) {
                 e.printStackTrace();
             }
