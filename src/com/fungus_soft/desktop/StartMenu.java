@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -118,7 +119,7 @@ public class StartMenu extends JProgram {
                 setSize(this.getPreferredSize());
                 try {
                     if ((b == !b) && !Main.isLowMemory) Thread.sleep(1);
-                } catch (InterruptedException e1) { e1.printStackTrace(); }
+                } catch (InterruptedException e){e.printStackTrace();}
                 validate();
             }
         });
@@ -137,6 +138,7 @@ public class StartMenu extends JProgram {
         System.out.println(Color.DARK_GRAY);
         background = bg;
         pBackground = pBg;
+        letBackground = lets;
         tilesBackground = tiles;
         borderBackground = border;
         if (null != i)
@@ -164,7 +166,7 @@ public class StartMenu extends JProgram {
         p.setLayout(new BorderLayout());
         t = new JPanel();
         t.setBackground(borderBackground);
-        t.setBorder(BorderFactory.createEmptyBorder(25,0,0,0));
+        t.setBorder(BorderFactory.createEmptyBorder(12,0,13,0));
         p.add(t, BorderLayout.NORTH);
 
         setBackground(background);
@@ -198,8 +200,8 @@ public class StartMenu extends JProgram {
                 return c;
             }
         };
-        tiles.setMinimumSize(new Dimension(100,450));
-        tiles.setLayout(new GridLayout(0,3));
+        tiles.setMinimumSize(new Dimension(100,200));
+        tiles.setLayout(new GridLayout(0,2));
         tiles.setBackground(Main.isLowMemory ? Color.DARK_GRAY : tilesBackground);
         tiles.setOpaque(false);
 
@@ -212,14 +214,15 @@ public class StartMenu extends JProgram {
         ((Tile)tiles.add(new Tile("folder", "File Explorer"))).onClick(l -> Main.p.add(new FileExplorer(mainDir_final)));
         ((Tile)tiles.add(new Tile("calc", "Calculator"))).onClick(l -> Main.p.add(new Calculator(), 245, 330));
         ((Tile)tiles.add(new Tile("web", "Web browser"))).onClick(l -> Main.p.add(new ZunoZapFx(), 1200, 800));
+        ((Tile)tiles.add(new Tile("menu/com.fungus_soft.programs.Store", "Store"))).onClick(l -> Main.p.add(new Store(), 1200, 800));
+        ((Tile)tiles.add(new Tile("menu/com.fungus_soft.desktop.settings.SettingsApp", "Settings"))).onClick(l -> Main.p.add(new SettingsApp(), 600, 400));
 
-        JMenu me = new JMenu(System.getProperty("user.name"));
+        JLabel me = new JLabel("Welcome " + System.getProperty("user.name"));
         me.setForeground(Color.white);
-        ba.add(me).addMouseListener(Utils.click(e -> Main.p.add(new FileExplorer(new File(System.getProperty("user.home"))))));
-        me.setIcon(new ImageIcon(IconPack.get().user.getScaledInstance(16, 16, 0)));
-        JSeparator sep = (JSeparator) ba.add(new JSeparator(SwingConstants.VERTICAL));
-        sep.setBackground(new Color(0,0,0,0));
-        sep.setForeground(new Color(0,0,0,0));
+        t.add(me).addMouseListener(Utils.click(e -> Main.p.add(new FileExplorer(new File(System.getProperty("user.home"))))));
+        me.setIcon(new ImageIcon(IconPack.get().user));
+
+        ba.add(Box.createHorizontalGlue());
 
         JMenu about = new JMenu("  About  ");
         about.setForeground(Color.white);
@@ -265,8 +268,9 @@ public class StartMenu extends JProgram {
             lets.add(let);
             sort.add(let);
         }
+        sort.setPreferredSize(new Dimension(214,sort.getPreferredSize().height));
         JScrollPane sp = new ModernScrollPane(sort, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        sp.setMaximumSize(new Dimension(228,Integer.MAX_VALUE));
+        sp.setMaximumSize(new Dimension(274,Integer.MAX_VALUE));
 
         JPanel b = new JPanel();
         b.setOpaque(false);
@@ -288,7 +292,7 @@ public class StartMenu extends JProgram {
         setDisplayInSystemBar(false);
         setVisible(true);
         pack();
-        this.setPreferredSize(new Dimension(589, 600));
+        this.setPreferredSize(new Dimension(500, 600));
         this.setBorder(null);
         sp.repaint();
     }

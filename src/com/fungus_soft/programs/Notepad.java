@@ -2,14 +2,13 @@ package com.fungus_soft.programs;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import javax.swing.BoxLayout;
@@ -35,6 +34,12 @@ public class Notepad extends JProgram {
     private File file;
     private int i;
     private int line;
+
+    private static Random r = new Random();
+
+    public Notepad() {
+        this(new File(new File(System.getProperty("user.home"), "Documents"), "Untitled-Document-" + r.nextInt(1000) + ".txt"));
+    }
 
     public Notepad(File fil) {
         this.setFrameIcon(IconPack.get().text);

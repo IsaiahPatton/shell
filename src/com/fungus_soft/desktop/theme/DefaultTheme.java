@@ -19,7 +19,7 @@ public class DefaultTheme extends Theme {
         SystemBar.setSized(new Dimension(Main.p.getWidth(), 48));
         SystemBar.setPanelBackground(new Color(0,0,0,250));
         SystemBar.setButtonBackground(Color.BLACK);
-        StartMenu.setColors(Color.BLACK, new Color(15,15,15,250), new Color(60,60,60), new Color(25,25,25, 250), new Color(20,20,20));
+        StartMenu.setColors(Color.BLACK, new Color(15,15,15,250), new Color(40,40,40), new Color(24,24,24, 250), new Color(20,20,20));
         Toast.BACKGROUND = Color.BLACK;
         Toast.FOREGROUND = Color.WHITE;
     }

@@ -15,10 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
 import com.fungus_soft.desktop.Main;
-import com.fungus_soft.desktop.StartMenu;
 import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
-import com.fungus_soft.desktop.api.Toast;
 
 public class JFrameWrapper extends JFrame {
 

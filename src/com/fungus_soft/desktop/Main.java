@@ -61,7 +61,7 @@ public class Main {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         ConsoleOutput.init();
-        //System.setProperty("sun.java2d.opengl", "true");
+        System.setProperty("sun.java2d.opengl", "true");
         isLowMemory = ram <= 128;
 
         double m = ram;
@@ -133,6 +133,7 @@ public class Main {
 
     public static boolean isInstalled(String name) {
         if (name.equalsIgnoreCase("ZunoZap Browser")) return true; // included
+        if (name.equalsIgnoreCase("JTerminal")) return true; // included
 
         return pr.contains(name);
     }

@@ -9,7 +9,7 @@ import com.fungus_soft.desktop.api.JProgram;
 import com.fungus_soft.desktop.api.ProgramInfo;
 import com.fungus_soft.desktop.api.Toast;
 
-@ProgramInfo(name = "Web Browser (Copper version)", version="UNRELEASED", authors="Copper Contributers", width=900, height=700)
+@ProgramInfo(name = "Web Copper Browser", version="UNRELEASED", authors="Copper Contributers", width=900, height=700)
 public class CopperBrowser extends JProgram {
 
     private static final long serialVersionUID = 1L;

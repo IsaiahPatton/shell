@@ -5,14 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,7 +23,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
-import com.codebrig.journey.JourneyBrowserView;
 import com.fungus_soft.desktop.Main;
 import com.fungus_soft.desktop.Utils;
 import com.fungus_soft.desktop.api.JProgram;
@@ -36,6 +33,7 @@ import com.fungus_soft.desktop.theme.IconPack;
 import com.fungus_soft.programs.zunozap.ZunoZapFx;
 import com.fungus_soft.ui.ModernButton;
 import com.fungus_soft.ui.ModernScrollPane;
+import com.fungus_soft.ui.WrapLayout;
 
 import jthemes.WindowPane;
 
@@ -55,23 +53,25 @@ public class Store extends JProgram {
     public Store() {
         this.nameToId = new HashMap<>();
         try {
-            // TODO Use data base instead of hardcoding
-            addListing(new ProgramListing("ZunoZap Browser", "Fungus Software", "A Chrome powered web browser", new URL("https://avatars1.githubusercontent.com/u/20327341"),
-                    Catagory.INTERNET, "https://zunozap.fungus-soft.com/zunozap/builds/ZunoZap-0.9.jar"));
-            addListing(new ProgramListing("The Incredible Game", "Fungus Software", "A 2D Block Game", new URL("https://fungus-soft.com/games/incredible-game/title.png"),
-                    Catagory.GAMES, "https://github.com/IsaiahPatton/blockgame/releases/download/1.0/blockgame-indev.jar"));
-            addListing(new ProgramListing("File Manager", "javadev on Github", "A java/swing basic File Manager", null,
-                    Catagory.GENERAL, "https://github.com/javadev/file-manager/raw/master/filemanager.jar"));
-            addListing(new ProgramListing("DrJava", "drjava", "An Java IDE", new URL("https://a.fsdn.com/allura/p/drjava/icon?1513717491"),
-                    Catagory.GENERAL, "https://downloads.sourceforge.net/project/drjava/1.%20DrJava%20Stable%20Releases/drjava-beta-20190813-220051/drjava-beta-20190813-220051.jar"));
-            addListing(new ProgramListing("Lobo Web Browser", "lobo", "An open-source Java based browser", new URL("https://avatars3.githubusercontent.com/u/6113075"),
-                    Catagory.INTERNET, "https://github.com/LoboEvolution/LoboEvolution/releases/download/1.0/LoboEvo.jar"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            // TODO Use data base
+            byte[] bytes;
+            try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("data/store.txt")) {
+                int dat = 0;
+                bytes = new byte[is.available()];
+                int i = 0;
+                while ((dat = is.read()) != -1)
+                    bytes[i++] = (byte) dat;
+            }
+            String[] lines = new String(bytes).split("\n");
+            for (String line : lines) {
+                String[] data = line.split(";");
+                addListing(new ProgramListing(data[0].trim(), data[1].trim(), data[2].trim(),
+                        data[3].trim().equalsIgnoreCase("null") ? null : new URL(data[3].trim()), Catagory.valueOf(data[4].trim()), data[5].trim()));
+            }
+        } catch (IOException e){e.printStackTrace();}
 
         JPanel all = new JPanel(new BorderLayout());
-        JPanel p = new JPanel();
+        JPanel p = new JPanel(new WrapLayout());
 
         WindowPane wp = this.getTitleBar();
         JButton back = new ModernButton("<");
@@ -213,6 +213,11 @@ public class Store extends JProgram {
                     if (pl.name.equalsIgnoreCase("ZunoZap Browser")) {
                         ProgramInfo i = ZunoZapFx.class.getAnnotation(ProgramInfo.class);
                         Main.p.add(new ZunoZapFx(), i.width(), i.height());
+                        return;
+                    }
+                    if (pl.name.equalsIgnoreCase("JTerminal")) {
+                        ProgramInfo i = TabbedTerminal.class.getAnnotation(ProgramInfo.class);
+                        Main.p.add(new TabbedTerminal(), i.width(), i.height());
                         return;
                     }
                     File f = new File(new File(Main.pStorage.getParentFile(), "downloadedPrograms"), pl.jarLocation.substring(pl.jarLocation.lastIndexOf("/")+1));

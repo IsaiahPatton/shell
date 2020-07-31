@@ -13,7 +13,7 @@ public class DefaultIconPack extends IconPack {
             this.img = getIcon("res/icons/img.png", true);
             this.text = getIcon("res/icons/text.png", true);
             this.fxprogram = getIcon("fxprogram.png", true);
-            this.user = get("res/userpictures/tree.png", false);
+            this.user = get("res/userpictures/avatar.png", false);
             this.welcome = get("welcome.png", false);
         } catch (IOException e) { e.printStackTrace(); }
         inst = this;

@@ -16,12 +16,12 @@ public class DefaultLightTheme extends Theme {
     public void apply() {
         Color WHITE = new Color(220,220,220);
 
-        ThemeUtils.setCurrentTheme(new ModernTheme());
+        ThemeUtils.setCurrentTheme(new LiteTheme());
         IconPack.setIconPack(new DefaultIconPack());
         SystemBar.setSized(new Dimension(Main.p.getWidth(), 48));
-        SystemBar.setPanelBackground(new Color(220,220,220,230));
+        SystemBar.setPanelBackground(new Color(200,200,200,230));
         SystemBar.setButtonBackground(WHITE);
-        StartMenu.setColors(Color.BLACK, new Color(215,215,215,250), new Color(200,200,200, 200), new Color(225,225,225, 250), new Color(220,220,220));
+        StartMenu.setColors(Color.BLACK, new Color(190,190,190,250), new Color(200,200,200, 222), new Color(170,170,170, 250), new Color(210,210,210));
         Toast.BACKGROUND = Color.WHITE;
         Toast.FOREGROUND = Color.BLACK;
     }

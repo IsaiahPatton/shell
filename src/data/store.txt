@@ -1,0 +1,6 @@
+ZunoZap Browser ; Fungus Software ; A Chrome powered web browser ; https://avatars1.githubusercontent.com/u/20327341 ; INTERNET ; https://zunozap.fungus-soft.com/zunozap/builds/ZunoZap-0.9.jar
+The Incredible Game ; Fungus Software ; A 2D Block Game ; https://fungus-soft.com/games/incredible-game/title.png ; GAMES ; https://github.com/IsaiahPatton/blockgame/releases/download/1.0/blockgame-indev.jar
+File Manager ; javadev ; A java swing basic File Manager ; null ; GENERAL ; https://github.com/javadev/file-manager/raw/master/filemanager.jar
+DrJava ; drjava ; An Java IDE ; https://a.fsdn.com/allura/p/drjava/icon?1513717491 ; GENERAL ; https://downloads.sourceforge.net/project/drjava/1.%20DrJava%20Stable%20Releases/drjava-beta-20190813-220051/drjava-beta-20190813-220051.jar
+Lobo Browser ; lobo ; An open-source Java based browser ; https://avatars3.githubusercontent.com/u/6113075 ; INTERNET ; https://github.com/LoboEvolution/LoboEvolution/releases/download/1.0/LoboEvo.jar
+JTerminal ; Fungus Software ; An open-source terminal written in Java ; null ; GENERAL ; https://files.fungus-soft.com/cs-class/CommandPrompt.jar

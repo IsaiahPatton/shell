@@ -37,7 +37,10 @@ public class WebViewBrowser extends JProgram {
     public static boolean jfxInit = false;
 
     public WebViewBrowser() {
-        if (!jfxInit) new JFXPanel(); // Init JavaFX
+        if (!jfxInit) {
+            new JFXPanel(); // Init JavaFX
+            Platform.runLater(() -> Platform.setImplicitExit(false));
+        }
         jfxInit = true;
 
         tb = new JTabbedPane();
